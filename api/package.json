@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/plotly.js": "^2.29.5",
+    "plotly.js": "^2.33.0"
+  }
+}
