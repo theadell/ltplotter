@@ -1,0 +1,11 @@
+services:
+  go_api:
+    build: 
+      context: ./api
+    container_name: ltp_go_api
+  frontend:
+    build:
+      context: ./frontend
+    container_name: ltp_frontend
+    ports:
+      - "8080:80"

@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <div
+          ref="dropZoneRef"
+          class="flex flex-col w-full min-h-200px h-auto bg-gray-400/10 justify-center items-center mt-6 rounded"
+        >
+    </div>
     <v-row justify="center">
       <v-col cols="12" md="6">
         <v-file-input v-model="file" label="Upload .raw File" accept=".raw" :rules="[fileRules]" :max-size="20000000"

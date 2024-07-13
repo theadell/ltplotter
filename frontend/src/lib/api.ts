@@ -1,6 +1,6 @@
 import { DataSet } from "./models";
 
-const apiBaseUrl = '/api';
+const apiBaseUrl = '/api/v1';
 
 export const Api = {
     async parseRawFile(file : File): Promise<DataSet> {

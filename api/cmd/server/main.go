@@ -1,22 +1,64 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
-	"log"
+	"flag"
+	"fmt"
 	"log/slog"
 	"ltplotter/pkg/mapper"
 	"ltplotter/pkg/parser"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
+
+var port int
+var host string
 
 func main() {
 
-	http.HandleFunc("POST /api/parse", parseSimulation)
-	slog.Info("Server is running on port 8080")
-	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+	flag.IntVar(&port, "port", 8080, "TCP Port to bind server to")
+	flag.StringVar(&host, "host", "localhost", "Network to bind to")
+	flag.Parse()
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /api/v1/parse", parseSimulationHandler)
+
+	server := http.Server{
+		Addr:              fmt.Sprintf("%s:%d", host, port),
+		Handler:           mux,
+		ReadTimeout:       time.Second * 5,
+		ReadHeaderTimeout: time.Second * 2,
+		WriteTimeout:      time.Second * 5,
+	}
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		slog.Info(fmt.Sprintf("Server is running on port %d", port))
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("Server failed to start", "err", err.Error())
+			os.Exit(1)
+		}
+	}()
+
+	<-stop
+	slog.Info("Shutting down server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("Server forced to shutdown", "err", err.Error())
+	}
+
+	slog.Info("Server has shut down gracefully")
 }
 
-func parseSimulation(w http.ResponseWriter, r *http.Request) {
+func parseSimulationHandler(w http.ResponseWriter, r *http.Request) {
 	file, _, err := r.FormFile("file")
 	if err != nil {
 		slog.Debug("failed to obtain file from request", "error", err)
