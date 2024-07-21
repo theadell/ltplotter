@@ -3,9 +3,24 @@ services:
     build: 
       context: ./api
     container_name: ltp_go_api
+    environment:
+      - PGFPLOT_SVC_URL=http://pgf_plot_svc:8080
+    depends_on:
+      - pgf_plot_svc
+  
+  pgf_plot_svc:
+    build: 
+      context: ./pgfPlotService
+    container_name: ltp_pgf_plot_svc
+    ports:
+      - "8081:8080"
+
   frontend:
     build:
       context: ./frontend
     container_name: ltp_frontend
     ports:
       - "8080:80"
+    depends_on:
+        - go_api
+
