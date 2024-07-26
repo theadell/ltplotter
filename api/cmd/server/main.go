@@ -97,7 +97,7 @@ func parseSimulationHandler(w http.ResponseWriter, r *http.Request) {
 
 func createPGFPlotHandler(proxy *httputil.ReverseProxy) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		slog.Info("RECIEVED A REQUEST", "host", r.Host, "path", r.URL.Path, "url", r.URL)
+		slog.Info("RECEIVED A REQUEST", "host", r.Host, "path", r.URL.Path, "url", r.URL)
 		if proxy == nil {
 			http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
 			return
