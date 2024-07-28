@@ -3,10 +3,13 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"log"
 	"log/slog"
+	"ltplotter/gen/pb"
+	"ltplotter/internal/rpc"
+	"ltplotter/pkg/adapter"
+	"ltplotter/pkg/config"
 	"ltplotter/pkg/mapper"
 	"ltplotter/pkg/parser"
 	"net/http"
@@ -16,35 +19,31 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/urfave/negroni"
 )
 
-type Config struct {
-	Port               int
-	Host               string
-	PGFPlotsServiceURL string
-}
-
 func main() {
-	config := &Config{}
+	config := config.LoadConfig()
 
-	flag.IntVar(&config.Port, "port", 8080, "TCP Port to bind server to")
-	flag.StringVar(&config.Host, "host", "localhost", "Network to bind to")
-
-	flag.Parse()
-
-	config.PGFPlotsServiceURL = os.Getenv("PGFPLOT_SVC_URL")
 	proxy, err := createReverseProxy(config.PGFPlotsServiceURL)
 	if err != nil {
-		log.Printf("Warning: Failed to parse PGFPlots service URL: %v\n", err)
+		slog.Warn("Failed to parse PGFPlots service URL", "error", err.Error())
 	}
+	chartRPCManager := rpc.NewChartServiceClientManager(config.PGFPlotsServiceURL)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/v1/parse", parseSimulationHandler)
 	mux.HandleFunc("POST /api/v1/pgfplot", createPGFPlotHandler(proxy))
+	mux.HandleFunc("POST /api/v2/pgfplot", createPGFPlotHandlerRPC(chartRPCManager))
+
+	n := negroni.New(adapter.ToNegroni(middleware.Recoverer), adapter.ToNegroni(middleware.Logger))
+	n.UseHandler(mux)
 
 	server := http.Server{
 		Addr:              fmt.Sprintf("%s:%d", config.Host, config.Port),
-		Handler:           mux,
+		Handler:           n,
 		ReadTimeout:       time.Second * 5,
 		ReadHeaderTimeout: time.Second * 2,
 		WriteTimeout:      time.Second * 5,
@@ -97,7 +96,6 @@ func parseSimulationHandler(w http.ResponseWriter, r *http.Request) {
 
 func createPGFPlotHandler(proxy *httputil.ReverseProxy) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		slog.Info("RECEIVED A REQUEST", "host", r.Host, "path", r.URL.Path, "url", r.URL)
 		if proxy == nil {
 			http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
 			return
@@ -125,4 +123,35 @@ func createReverseProxy(targetURL string) (*httputil.ReverseProxy, error) {
 		slog.Info("proxy passing request", "url", r.URL.String())
 	}
 	return proxy, nil
+}
+
+func createPGFPlotHandlerRPC(clientManager *rpc.ChartServiceClientManager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		client, err := clientManager.GetClient()
+		if err != nil {
+			http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
+			return
+		}
+
+		var req pb.PlotRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+		defer cancel()
+
+		res, err := client.GeneratePlot(ctx, &req)
+		if err != nil {
+			log.Printf("Error generating chart: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", "attachment; filename=chart.pdf")
+
+		w.Write(res.Pdf)
+	}
 }

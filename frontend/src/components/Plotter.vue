@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <DropZone ></DropZone>
     <div
           ref="dropZoneRef"
           class="flex flex-col w-full min-h-200px h-auto bg-gray-400/10 justify-center items-center mt-6 rounded"
