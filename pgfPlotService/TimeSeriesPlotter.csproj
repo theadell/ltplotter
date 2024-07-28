@@ -20,4 +20,8 @@
     <Protobuf Include="..\proto\test.proto" GrpcServices="Server" OutputDir="Generated" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+  </ItemGroup>
+
 </Project>

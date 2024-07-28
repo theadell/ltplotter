@@ -2,14 +2,18 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using Serilog;
 using PgfPlot;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<PlotService.Services.PlotService>();
-builder.Services.AddGrpc();
 
 var app = builder.Build();
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
 app.UseRouting();
 
@@ -25,6 +29,7 @@ app.UseEndpoints(endpoints =>
 
 app.MapPost("/generate-plot", async (HttpContext context, PlotRequest request, PlotService.Services.PlotService plotService) =>
 {
+    Log.Information("Received PlotRequest {@plotRequest}", request);
     var latexString = plotService.GenerateLatex(request);
     var pdf = plotService.CompileLatex(latexString);
     context.Response.ContentType = "application/pdf";

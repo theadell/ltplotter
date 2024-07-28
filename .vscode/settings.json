@@ -1,0 +1,10 @@
+{
+    "editor.formatOnSave": true,
+    "protoc": {
+        "path": "/opt/homebrew/bin/protoc",
+        "compile_on_save": false,
+        "options": [
+            "--proto_path=proto3",
+        ]
+    }
+}
