@@ -1,11 +1,14 @@
 using System.Diagnostics;
+using Google.Protobuf.Collections;
+using Plot;
+using PlotService.Models;
 using Serilog;
 
 namespace PlotService.Services;
 
-public class PlotService
+public class LatexService : ILatexService
 {
-    public string GenerateLatex(PlotRequest request)
+    public string GenerateLatex(PlotRequest plotRequest)
     {
         try
         {
@@ -14,15 +17,45 @@ public class PlotService
             sb.AppendLine(@"\usepackage{pgfplots}");
             sb.AppendLine(@"\begin{document}");
             sb.AppendLine(@"\begin{tikzpicture}");
-            sb.AppendLine(
-                @$"\begin{{axis}}[title={{{request.Metadata.Title}}}, xlabel={{{request.Metadata.Labels.X}}}, ylabel={{{request.Metadata.Labels.Y}}}, legend pos=outer north east]");
-            for (var i = 0; i < request.Y.Count; i++)
+            sb.AppendLine(@$"\begin{{axis}}[title={{{plotRequest.Metadata.Title}}}, xlabel={{{plotRequest.Metadata.Labels.X}}}, ylabel={{{plotRequest.Metadata.Labels.Y}}}, legend pos=outer north east]");
+            
+            for (var i = 0; i < plotRequest.Y.Count; i++)
             {
                 sb.Append(@"\addplot coordinates {");
-                sb.Append(string.Join(' ',
-                    request.X.Zip(request.Y[i]).Select(pair => $"({pair.Item1}, {pair.Item2})")));
+                sb.Append(string.Join(' ', plotRequest.X.Zip(plotRequest.Y[i].Values).Select(pair => $"({pair.Item1}, {pair.Item2})")));
                 sb.AppendLine("};");
-                sb.AppendLine(@$"\addlegendentry{{{request.Metadata.Legends[i]}}}");
+                sb.AppendLine(@$"\addlegendentry{{{plotRequest.Metadata.Legends[i]}}}");
+            }
+
+            sb.AppendLine(@"\end{axis}");
+            sb.AppendLine(@"\end{tikzpicture}");
+            sb.AppendLine(@"\end{document}");
+            return sb.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Exception while generating latex string: {@ex}", ex);
+            return string.Empty;
+        }
+    }
+
+    public string GenerateLatex(PlotRequestRest requestRest)
+    {
+        try
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine(@"\documentclass{standalone}");
+            sb.AppendLine(@"\usepackage{pgfplots}");
+            sb.AppendLine(@"\begin{document}");
+            sb.AppendLine(@"\begin{tikzpicture}");
+            sb.AppendLine(@$"\begin{{axis}}[title={{{requestRest.Metadata.Title}}}, xlabel={{{requestRest.Metadata.Labels.X}}}, ylabel={{{requestRest.Metadata.Labels.Y}}}, legend pos=outer north east]");
+            
+            for (var i = 0; i < requestRest.Y.Count; i++)
+            {
+                sb.Append(@"\addplot coordinates {");
+                sb.Append(string.Join(' ', requestRest.X.Zip(requestRest.Y[i]).Select(pair => $"({pair.Item1}, {pair.Item2})")));
+                sb.AppendLine("};");
+                sb.AppendLine(@$"\addlegendentry{{{requestRest.Metadata.Legends[i]}}}");
             }
 
             sb.AppendLine(@"\end{axis}");
