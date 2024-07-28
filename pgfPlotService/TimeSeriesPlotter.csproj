@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\proto\test.proto" GrpcServices="Server" OutputDir="Generated" />
+    <Protobuf Include="..\proto3\plot.proto" GrpcServices="Server" OutputDir="Generated" />
   </ItemGroup>
 
   <ItemGroup>

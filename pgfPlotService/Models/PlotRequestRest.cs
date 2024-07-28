@@ -1,4 +1,6 @@
-public class PlotRequest
+namespace PlotService.Models;
+
+public class PlotRequestRest
 {
     public List<double> X { get; set; }
     public List<List<double>> Y { get; set; }
