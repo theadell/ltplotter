@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.27.2" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.65.0" />
     <PackageReference Include="Grpc.Tools" Version="2.65.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\proto3\plot.proto" GrpcServices="Server" OutputDir="Generated" />
+    <Protobuf Include=".\proto3\plot.proto" GrpcServices="Server" OutputDir="Generated" />
   </ItemGroup>
 
   <ItemGroup>

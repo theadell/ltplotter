@@ -14,6 +14,7 @@ services:
     container_name: ltp_pgf_plot_svc
     ports:
       - "8081:8080"
+      - "5001:5001"
 
   frontend:
     build:
