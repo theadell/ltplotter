@@ -31,7 +31,7 @@ func main() {
 	if err != nil {
 		slog.Warn("Failed to parse PGFPlots service URL", "error", err.Error())
 	}
-	chartRPCManager := rpc.NewChartServiceClientManager(config.PGFPlotsServiceURL)
+	chartRPCManager := rpc.NewChartServiceClientManager(config.PGFPlotServiceURLRPC)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/v1/parse", parseSimulationHandler)
@@ -135,6 +135,7 @@ func createPGFPlotHandlerRPC(clientManager *rpc.ChartServiceClientManager) http.
 
 		var req pb.PlotRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			slog.Error("failed to decode request body", "error", err.Error())
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		}

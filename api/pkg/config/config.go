@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Port               int
-	Host               string
-	PGFPlotsServiceURL string
+	Port                 int
+	Host                 string
+	PGFPlotsServiceURL   string
+	PGFPlotServiceURLRPC string
 }
 
 func LoadConfig() *Config {
@@ -27,6 +28,7 @@ func LoadConfig() *Config {
 	}
 
 	config.PGFPlotsServiceURL = os.Getenv("PGFPLOT_SVC_URL")
+	config.PGFPlotServiceURLRPC = os.Getenv("PGFPLOT_SVC_URL_RPC")
 
 	flag.IntVar(&config.Port, "port", config.Port, "TCP Port to bind server to")
 	flag.StringVar(&config.Host, "host", config.Host, "Network to bind to")

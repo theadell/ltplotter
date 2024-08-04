@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: chart.proto
+// source: plot.proto
 
 package pb
 
@@ -101,5 +101,5 @@ var PlotService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "chart.proto",
+	Metadata: "plot.proto",
 }
