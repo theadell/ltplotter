@@ -7,9 +7,9 @@ import (
 	"log"
 	"log/slog"
 	"ltplotter/gen/pb"
+	"ltplotter/internal/config"
 	"ltplotter/internal/rpc"
 	"ltplotter/pkg/adapter"
-	"ltplotter/pkg/config"
 	"ltplotter/pkg/mapper"
 	"ltplotter/pkg/parser"
 	"net/http"
@@ -31,7 +31,7 @@ func main() {
 	if err != nil {
 		slog.Warn("Failed to parse PGFPlots service URL", "error", err.Error())
 	}
-	chartRPCManager := rpc.NewChartServiceClientManager(config.PGFPlotServiceURLRPC)
+	chartRPCManager := rpc.NewChartServiceClientManager(config.PGFPlotServiceURLRPC, config.CertsPath)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/v1/parse", parseSimulationHandler)

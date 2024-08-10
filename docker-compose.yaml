@@ -8,6 +8,8 @@ services:
       - PGFPLOT_SVC_URL_RPC=pgf_plot_svc:5001
     depends_on:
       - pgf_plot_svc
+    volumes:
+      - ./certs:/app/certs:ro
 
   pgf_plot_svc:
     build:
@@ -16,6 +18,8 @@ services:
     ports:
       - "8081:8080"
       - "5001:5001"
+    volumes:
+      - ./certs:/app/certs:ro
 
   frontend:
     build:
