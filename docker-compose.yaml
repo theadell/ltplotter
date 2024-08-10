@@ -18,6 +18,8 @@ services:
     ports:
       - "8081:8080"
       - "5001:5001"
+    volumes:
+      - ./certs:/app/certs:ro
 
   frontend:
     build:
