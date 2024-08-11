@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"html/template"
 	"log"
 	"log/slog"
 	"ltplotter/common/middleware"
@@ -14,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"text/template"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,6 +24,18 @@ import (
 
 type server struct {
 	pb.UnimplementedExpressionPlotServiceServer
+	tmpl *template.Template
+}
+
+func newServer() (*server, error) {
+	tmpl, err := template.ParseFiles("expr_plot_template.go.tex")
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse template: %v", err)
+	}
+
+	return &server{
+		tmpl: tmpl,
+	}, nil
 }
 
 func (s *server) GeneratePlot(ctx context.Context, req *pb.ExprPlotRequest) (*pb.ExprPlotResponse, error) {
@@ -34,11 +46,6 @@ func (s *server) GeneratePlot(ctx context.Context, req *pb.ExprPlotRequest) (*pb
 	latexFileName := fmt.Sprintf("%s.tex", baseFilename)
 	pdfFileName := fmt.Sprintf("%s.pdf", baseFilename)
 
-	tmpl, err := template.ParseFiles("expr_plot_template.go.tex")
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to parse template: %v", err)
-	}
-
 	latexFilePath := filepath.Join(os.TempDir(), latexFileName)
 	latexFile, err := os.Create(latexFilePath)
 	if err != nil {
@@ -46,7 +53,7 @@ func (s *server) GeneratePlot(ctx context.Context, req *pb.ExprPlotRequest) (*pb
 	}
 	defer latexFile.Close()
 
-	err = tmpl.Execute(latexFile, req)
+	err = s.tmpl.Execute(latexFile, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to execute LaTeX template: %v", err)
 	}
@@ -95,6 +102,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
+	srv, err := newServer()
+	if err != nil {
+		log.Fatalf("Failed to initialize server: %v", err)
+	}
 
 	creds, err := utils.LoadCerts(config.CertsPath, "expression_plot_server")
 	if err != nil {
@@ -108,7 +119,7 @@ func main() {
 		),
 	)
 
-	pb.RegisterExpressionPlotServiceServer(grpcServer, &server{})
+	pb.RegisterExpressionPlotServiceServer(grpcServer, srv)
 
 	log.Printf("gRPC server listening on %v", lis.Addr())
 	if err := grpcServer.Serve(lis); err != nil {

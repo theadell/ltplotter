@@ -46,6 +46,10 @@ func CreateExprPlotHandler(clientManager *rpc.ExpressionPlotServiceClientManager
 		json.NewEncoder(w).Encode(map[string]string{
 			"jobID": jobID,
 		})
+		slog.Debug("Dispatched job for expression plot generation",
+			"jobID", jobID,
+			"expressions", req.Plots,
+		)
 
 		go func() {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)

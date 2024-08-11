@@ -58,8 +58,7 @@ func validateExpression(expression string) error {
 		return ErrExpressionEmpty
 	}
 
-	// Basic whitelisting: allow only simple mathematical expressions
-	allowedPattern := `^[a-zA-Z0-9\+\-\*/\^\(\)\s]*$`
+	allowedPattern := `^[a-zA-Z0-9\+\-\*/\^\(\)\s=.,<>!&|%]*$`
 	matched, err := regexp.MatchString(allowedPattern, expression)
 	if err != nil {
 		return err
