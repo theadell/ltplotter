@@ -28,7 +28,7 @@
                     <div class="text-gray-600 text-sm mb-5">
                         <p><strong>Examples of valid expressions:</strong></p>
                         <ul class="list-disc pl-5">
-                            <li>x^2 + 3x - 5</li>
+                            <li>x^2 + 3*x - 5</li>
                             <li>sin(deg(x)) * cos(deg(x))</li>
                             <li>log10(x) + e^x - ln(x)</li>
                             <li>e^x - ln(x)</li>
