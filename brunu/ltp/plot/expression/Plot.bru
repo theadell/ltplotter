@@ -1,0 +1,29 @@
+meta {
+  name: Plot
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{API_URL}}/plot/expr/:id
+  body: none
+  auth: none
+}
+
+params:query {
+  ~format: latex
+}
+
+params:path {
+  id: 01J509EQXDXCJ7DWWFQ9X7TBJ9
+}
+
+vars:pre-request {
+  id: 
+}
+
+docs {
+  Supported Format:
+  - PDF: the generated plot
+  - Latex: the latex source file
+}

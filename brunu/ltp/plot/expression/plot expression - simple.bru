@@ -1,0 +1,24 @@
+meta {
+  name: plot expression - simple
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{API_URL}}/plot/expr
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "plots": [
+      {
+        "expression": "sin(deg(x))"
+      },
+      {
+        "expression": "cos(deg(x))"
+      }
+    ]
+  }
+}
