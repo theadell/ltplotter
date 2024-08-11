@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/PlotExpression",
+    "definitions": {
+        "PlotExpression": {
+            "properties": {
+                "expression": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "samples": {
+                    "type": "integer"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "line_style": {
+                    "type": "string"
+                },
+                "line_width": {
+                    "type": "string"
+                },
+                "legend": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Plot Expression"
+        }
+    }
+}

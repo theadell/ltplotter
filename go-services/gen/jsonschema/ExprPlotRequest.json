@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ExprPlotRequest",
+    "definitions": {
+        "ExprPlotRequest": {
+            "properties": {
+                "x_label": {
+                    "type": "string"
+                },
+                "y_label": {
+                    "type": "string"
+                },
+                "x_min": {
+                    "type": "string"
+                },
+                "x_max": {
+                    "type": "string"
+                },
+                "y_min": {
+                    "type": "string"
+                },
+                "y_max": {
+                    "type": "string"
+                },
+                "grid": {
+                    "type": "boolean"
+                },
+                "plots": {
+                    "items": {
+                        "$ref": "#/definitions/plot.PlotExpression"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Expr Plot Request"
+        },
+        "plot.PlotExpression": {
+            "properties": {
+                "expression": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "samples": {
+                    "type": "integer"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "line_style": {
+                    "type": "string"
+                },
+                "line_width": {
+                    "type": "string"
+                },
+                "legend": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Plot Expression"
+        }
+    }
+}

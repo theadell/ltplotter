@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ExprPlotResponse",
+    "definitions": {
+        "ExprPlotResponse": {
+            "properties": {
+                "latex_src_code": {
+                    "type": "string"
+                },
+                "pdf_plot": {
+                    "type": "string",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Expr Plot Response"
+        }
+    }
+}

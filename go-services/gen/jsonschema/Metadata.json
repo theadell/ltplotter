@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/Metadata",
+    "definitions": {
+        "Metadata": {
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "labels": {
+                    "$ref": "#/definitions/plot.Labels",
+                    "additionalProperties": true
+                },
+                "legends": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+        },
+        "plot.Labels": {
+            "properties": {
+                "x": {
+                    "type": "string"
+                },
+                "y": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Labels"
+        }
+    }
+}
