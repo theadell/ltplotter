@@ -1,10 +1,10 @@
 {
-    "editor.formatOnSave": true,
-    "protoc": {
-        "path": "/opt/homebrew/bin/protoc",
-        "compile_on_save": false,
-        "options": [
-            "--proto_path=proto3",
-        ]
-    }
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "protoc": {
+    "path": "/opt/homebrew/bin/protoc",
+    "compile_on_save": false,
+    "options": ["--proto_path=proto3"]
+  }
 }
