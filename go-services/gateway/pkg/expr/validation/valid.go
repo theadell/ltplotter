@@ -145,19 +145,6 @@ func ValidateRequest(req *pb.ExprPlotRequest) error {
 		}
 	}
 
-	if err := validateNumericalField("XMin", req.GetXMin()); err != nil {
-		return err
-	}
-	if err := validateNumericalField("XMax", req.GetXMax()); err != nil {
-		return err
-	}
-	if err := validateNumericalField("YMin", req.GetYMin()); err != nil {
-		return err
-	}
-	if err := validateNumericalField("YMax", req.GetYMax()); err != nil {
-		return err
-	}
-
 	if err := validateTextualField(req.GetXLabel()); err != nil {
 		return err
 	}

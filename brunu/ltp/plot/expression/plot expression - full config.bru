@@ -12,13 +12,16 @@ post {
 
 body:json {
   {
+    "title": "Sine vs Cosine",
+    "axis_lines": 1, 
     "x_label": "Time (s)",
     "y_label": "Amplitude",
-    "x_min": "0",
-    "x_max": "6.28",
-    "y_min": "-1",
-    "y_max": "1",
-    "grid": false,
+    "x_min": 0,
+    "x_max": 7,
+    "y_min": -1,
+    "y_max": 1,
+    "grid": true,
+    "border": 10,
     "plots": [
       {
         "expression": "sin(deg(x))",

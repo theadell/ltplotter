@@ -28,7 +28,11 @@ type server struct {
 }
 
 func newServer() (*server, error) {
-	tmpl, err := template.ParseFiles("expr_plot_template.go.tex")
+	funcMap := template.FuncMap{
+		"axisLinesToLatex": axisLinesToLatex,
+	}
+
+	tmpl, err := template.New("expr_plot_template.go.tex").Funcs(funcMap).ParseFiles("expr_plot_template.go.tex")
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse template: %v", err)
 	}
@@ -124,5 +128,24 @@ func main() {
 	log.Printf("gRPC server listening on %v", lis.Addr())
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
+	}
+}
+
+func axisLinesToLatex(axisLines pb.AxisLines) string {
+	switch axisLines {
+	case pb.AxisLines_AXIS_LINES_BOX:
+		return "box"
+	case pb.AxisLines_AXIS_LINES_LEFT:
+		return "left"
+	case pb.AxisLines_AXIS_LINES_RIGHT:
+		return "right"
+	case pb.AxisLines_AXIS_LINES_MIDDLE:
+		return "middle"
+	case pb.AxisLines_AXIS_LINES_CENTER:
+		return "center"
+	case pb.AxisLines_AXIS_LINES_NONE:
+		return "none"
+	default:
+		return "box"
 	}
 }

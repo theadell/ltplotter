@@ -1,11 +1,12 @@
-\documentclass{standalone}
+\documentclass[border={{ with .Border }}{{ . }}mm{{ else }}5mm{{ end }}]{standalone}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
 \begin{document}
 \begin{tikzpicture}
     \begin{axis}[
-        axis lines = middle,
+        {{- with .Title }}title={ {{ . }} },{{ end }}
+        axis lines = {{ axisLinesToLatex .AxisLines }},
         xlabel = ${{ with .XLabel }}{{ . }}{{ else }}x{{ end }}$,
         ylabel = ${{ with .YLabel }}{{ . }}{{ else }}y{{ end }}$,
         {{- with .XMin }}xmin={{ . }},{{ end }}
@@ -17,9 +18,10 @@
     ]
     {{- range .Plots }}
     \addplot [
+        thick,
         domain={{ with .Domain }}{{ . }}{{ else }}-10:10{{ end }},
         samples={{ with .Samples }}{{ . }}{{ else }}100{{ end }},
-        color={{ with .Color }}{{ . }}{{ else }}blue{{ end }},
+        {{- with .Color }}{{ . }},{{ end }}
         {{- with .LineStyle }}{{ . }},{{ end }}
         {{- with .LineWidth }}line width={{ . }}{{ end }}
     ]
