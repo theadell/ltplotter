@@ -191,10 +191,6 @@
       </v-expansion-panels>
     </div>
 
-    <v-alert v-if="error" class="my-4 w-full" closable type="error">
-      Something went wrong
-    </v-alert>
-
     <!-- Generate Plot Button -->
     <v-btn
       block
@@ -220,10 +216,9 @@ import { VForm } from 'vuetify/components'
 
 interface Props {
   loading: boolean
-  error: boolean
 }
 
-const { loading = false, error = false } = defineProps<Props>()
+const { loading = false } = defineProps<Props>()
 const isFormValid = ref(true)
 const emit = defineEmits<{(e: 'submit', formData: PlotRequest): void }>()
 
