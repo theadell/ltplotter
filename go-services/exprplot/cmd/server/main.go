@@ -43,6 +43,9 @@ func newServer() (*server, error) {
 }
 
 func (s *server) GeneratePlot(ctx context.Context, req *pb.ExprPlotRequest) (*pb.ExprPlotResponse, error) {
+
+	utils.EscapeExprPlotRequest(req)
+
 	requestID := uuid.New().String()
 	timestamp := time.Now().Format("20060102_150405")
 	baseFilename := fmt.Sprintf("plot_%s_%s", timestamp, requestID)
