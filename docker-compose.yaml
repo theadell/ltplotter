@@ -1,20 +1,35 @@
 services:
-  go_api:
+  api:
     build:
-      context: ./api
-    container_name: ltp_go_api
+      context: ./go-services
+      dockerfile: gateway.Dockerfile
+    container_name: ltp-api
     environment:
-      - PGFPLOT_SVC_URL=http://pgf_plot_svc:8080
-      - PGFPLOT_SVC_URL_RPC=pgf_plot_svc:5001
+      - PGFPLOT_SVC_URL=http://pgf-plot-service:8080
+      - PGFPLOT_SVC_URL_RPC=pgf-plot-service:5001
+    ports:
+      - "8082:8080"
     depends_on:
-      - pgf_plot_svc
+      - pgf-plot-service
+      - expr-plot-service
     volumes:
       - ./certs:/app/certs:ro
 
-  pgf_plot_svc:
+  expr-plot-service:
+    build:
+      context: ./go-services
+      dockerfile: exprplot.Dockerfile
+    container_name: ltp-expr-plot-service
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./certs:/app/certs:ro
+      - ./go-services/exprplot/static/expr_plot.go.tex:/app/expr_plot.go.tex
+
+  pgf-plot-service:
     build:
       context: ./pgfPlotService
-    container_name: ltp_pgf_plot_svc
+    container_name: ltp-pgf-plot-service
     ports:
       - "8081:8080"
       - "5001:5001"
@@ -24,8 +39,10 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: ltp_frontend
+    container_name: ltp-frontend
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "8080:80"
     depends_on:
-      - go_api
+      - api

@@ -1,1 +1,14 @@
 .DS_Store
+bin/
+*.exe
+*.out
+*.dll
+*.so
+
+go.work
+go.work.sum
+docker-compose.override.yml
+
+.env 
+.env.prod
+.env.stage
