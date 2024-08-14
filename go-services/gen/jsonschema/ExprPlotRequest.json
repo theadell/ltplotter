@@ -11,19 +11,50 @@
                     "type": "string"
                 },
                 "x_min": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "x_max": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "y_min": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "y_max": {
-                    "type": "string"
+                    "type": "integer"
+                },
+                "axis_lines": {
+                    "enum": [
+                        "AXIS_LINES_BOX",
+                        0,
+                        "AXIS_LINES_LEFT",
+                        1,
+                        "AXIS_LINES_RIGHT",
+                        2,
+                        "AXIS_LINES_MIDDLE",
+                        3,
+                        "AXIS_LINES_CENTER",
+                        4,
+                        "AXIS_LINES_NONE",
+                        5
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "Axis Lines"
+                },
+                "border": {
+                    "type": "integer"
                 },
                 "grid": {
                     "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
                 },
                 "plots": {
                     "items": {

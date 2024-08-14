@@ -8,6 +8,15 @@ service ExpressionPlotService {
   rpc GeneratePlot(ExprPlotRequest) returns (ExprPlotResponse);
 }
 
+enum AxisLines {
+  AXIS_LINES_BOX = 0;
+  AXIS_LINES_LEFT = 1;
+  AXIS_LINES_RIGHT = 2;
+  AXIS_LINES_MIDDLE = 3;
+  AXIS_LINES_CENTER = 4;
+  AXIS_LINES_NONE = 5;
+}
+
 message PlotExpression {
   string expression = 1;
   string domain = 2;
@@ -21,12 +30,15 @@ message PlotExpression {
 message ExprPlotRequest {
   string x_label = 1;
   string y_label = 2;
-  string x_min = 3;
-  string x_max = 4;
-  string y_min = 5;
-  string y_max = 6;
-  bool grid = 7;
-  repeated PlotExpression plots = 8;
+  int32 x_min = 3;
+  int32 x_max = 4;
+  int32 y_min = 5;
+  int32 y_max = 6;
+  AxisLines axis_lines = 7[json_name="axis_lines"]; 
+  int32 border = 8;
+  bool grid = 9;
+  string title = 10;
+  repeated PlotExpression plots = 11;
 }
 
 message ExprPlotResponse {

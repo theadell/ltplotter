@@ -4,6 +4,8 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"ltplotter/common/tex"
+	"ltplotter/gen/pb"
 	"os"
 	"path/filepath"
 
@@ -36,4 +38,20 @@ func LoadCerts(certsPath, name string) (credentials.TransportCredentials, error)
 	})
 
 	return creds, nil
+}
+
+func EscapeExprPlotRequest(req *pb.ExprPlotRequest) {
+	req.Title = tex.Escape(req.Title)
+	req.XLabel = tex.Escape(req.XLabel)
+	req.YLabel = tex.Escape(req.YLabel)
+
+	for _, plotExpr := range req.Plots {
+		// TODO: Create a parser to build a syntax tree and validate that the expression is valid
+		// plotExpr.Expression = tex.Escape(plotExpr.Expression)
+		plotExpr.Domain = tex.Escape(plotExpr.Domain)
+		plotExpr.Color = tex.Escape(plotExpr.Color)
+		plotExpr.LineStyle = tex.Escape(plotExpr.LineStyle)
+		plotExpr.LineWidth = tex.Escape(plotExpr.LineWidth)
+		plotExpr.Legend = tex.Escape(plotExpr.Legend)
+	}
 }

@@ -10,11 +10,17 @@ module.exports = {
     node: true,
   },
   extends: [
-    'plugin:vue/vue3-essential',
-    'eslint:recommended',
+    'vuetify',
     '@vue/eslint-config-typescript',
+    './.eslintrc-auto-import.json',
   ],
   rules: {
     'vue/multi-word-component-names': 'off',
+    'vue/script-indent': ['warn', 2, {
+      baseIndent: 0,
+      switchCase: 0,
+      ignores: [],
+    }],
+    'no-multiple-empty-lines': ['warn', { max: 1 }],
   },
 }
