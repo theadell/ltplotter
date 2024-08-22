@@ -2,7 +2,7 @@
   <v-form ref="formRef" v-model="isFormValid">
 
     <div>
-      <h3 class="text-xl font-medium text-gray-700 mb-4">Math Expressions</h3>
+      <h3 class="text-xl font-medium mb-4">Math Expressions</h3>
       <div v-for="(expr, index) in formState.plots" :key="index" class="mb-1">
         <v-text-field
           :id="'expression-' + index"
@@ -14,7 +14,7 @@
           variant="outlined"
         >
           <template #prepend-inner>
-            <span class="text-gray-500 whitespace-nowrap">y =</span>
+            <span class="whitespace-nowrap">y =</span>
           </template>
 
           <template #append>
@@ -36,8 +36,8 @@
 
       <v-btn
         block
-        class="mb-5 text-none text-subtitle-2"
-        color="blue-grey-darken-1"
+        class="mb-5 text-subtitle-2"
+        color="blue-grey-lighten-1"
         prepend-icon="mdi-plus"
         variant="text"
         @click="addExpression"
@@ -46,8 +46,8 @@
       </v-btn>
 
       <!-- Guide for Valid Expressions -->
-      <div class="text-gray-600 text-sm mb-5">
-        <p><strong>Examples of valid expressions:</strong></p>
+      <div class="text-sm mb-5">
+        <p>Examples of valid expressions:</p>
         <ul class="list-disc pl-5">
           <li>x^2 + 3*x - 5</li>
           <li>log10(x) + e^x - ln(x) + sin(deg(x))</li>
@@ -194,12 +194,11 @@
     <!-- Generate Plot Button -->
     <v-btn
       block
-      class="mt-4 py-3 text-lg font-medium text-white"
-      color="#7986CB"
+      class="mt-4 text-none text-lg font-medium"
+      color="primary"
       :disabled="!isFormValid"
       :loading="loading"
       prepend-icon="mdi-auto-fix"
-      variant="elevated"
       @click="generateExpression"
     >
       Generate Plot

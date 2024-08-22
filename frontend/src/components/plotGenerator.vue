@@ -1,11 +1,11 @@
 
 <template>
   <v-container>
-    <h2 class="text-3xl mt-6 font-bold text-gray-800 mb-6 text-center">
+    <h2 class="text-3xl mt-6 font-bold mb-6 text-center">
       Plot Generator
     </h2>
     <v-row>
-      <v-col class="bg-white rounded-lg p-6" cols="12" md="6">
+      <v-col class="rounded-lg p-6" cols="12" md="6">
         <PlotForm2d :error="status.error" :loading="status.loading" @submit="onFormSubmit" />
       </v-col>
 
