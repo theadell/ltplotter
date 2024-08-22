@@ -10,7 +10,7 @@ on:
   workflow_dispatch: 
 jobs:
   build:
-    runs-on: ubunu-latest
+    runs-on: ubuntu-latest
     defaults: 
       run:
         shell: bash
