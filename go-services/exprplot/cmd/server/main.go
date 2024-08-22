@@ -81,7 +81,7 @@ func (s *server) GeneratePlot(ctx context.Context, req *pb.ExprPlotRequest) (*pb
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		slog.Error("pdflatex failed to compile", "error", err.Error(), "output", string(output))
+		slog.Error("pdflatex failed to compile", "error", err.Error(), "output", string(output), "input", string(latexFileContent))
 		return nil, status.Errorf(codes.Internal, "Failed to generate PDF: %v", err)
 	}
 

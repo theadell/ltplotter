@@ -4,13 +4,18 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"log/slog"
 	"ltplotter/common/tex"
 	"ltplotter/gen/pb"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 
 	"google.golang.org/grpc/credentials"
 )
+
+var validLineWidthFormat = regexp.MustCompile(`^(\d+)(\s*pt)?$`)
 
 func LoadCerts(certsPath, name string) (credentials.TransportCredentials, error) {
 	clientCertPath := filepath.Join(certsPath, fmt.Sprintf("%s.crt", name))
@@ -49,9 +54,46 @@ func EscapeExprPlotRequest(req *pb.ExprPlotRequest) {
 		// TODO: Create a parser to build a syntax tree and validate that the expression is valid
 		// plotExpr.Expression = tex.Escape(plotExpr.Expression)
 		plotExpr.Domain = tex.Escape(plotExpr.Domain)
-		plotExpr.Color = tex.Escape(plotExpr.Color)
-		plotExpr.LineStyle = tex.Escape(plotExpr.LineStyle)
-		plotExpr.LineWidth = tex.Escape(plotExpr.LineWidth)
+		plotExpr.Color = tex.ColorToTikzColor(plotExpr.Color)
+		plotExpr.LineStyle = validateAndConvertLineStyle(plotExpr.LineStyle)
+		plotExpr.LineWidth = MapWidthToTikz(plotExpr.LineWidth)
 		plotExpr.Legend = tex.Escape(plotExpr.Legend)
 	}
+}
+
+func MapWidthToTikz(input string) string {
+	input = strings.TrimSpace(input)
+
+	if validLineWidthFormat.MatchString(input) {
+		matches := validLineWidthFormat.FindStringSubmatch(input)
+		return fmt.Sprintf("%spt", matches[1])
+	}
+	slog.Warn("invalid or mallformatted width", "input", input, "fallback", "1pt")
+	return "1pt"
+}
+
+var validTikzLineStyles = map[string]bool{
+	"solid":                 true,
+	"dotted":                true,
+	"densely dotted":        true,
+	"loosely dotted":        true,
+	"dashed":                true,
+	"densely dashed":        true,
+	"loosely dashed":        true,
+	"dashdotted":            true,
+	"densely dashdotted":    true,
+	"loosely dashdotted":    true,
+	"dashdotdotted":         true,
+	"densely dashdotdotted": true,
+	"loosely dashdotdotted": true,
+}
+
+func validateAndConvertLineStyle(input string) string {
+	input = strings.TrimSpace(strings.ToLower(input))
+
+	if validTikzLineStyles[input] {
+		return input
+	}
+	slog.Warn("invalid or mallformatted line style", "input", input, "fallback", "solid")
+	return "solid"
 }
