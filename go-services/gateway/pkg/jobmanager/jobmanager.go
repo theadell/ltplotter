@@ -8,6 +8,19 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
+type JobStatus string
+
+const (
+	StatusPending   JobStatus = "pending"
+	StatusCompleted JobStatus = "completed"
+	StatusFailed    JobStatus = "failed"
+)
+
+type JobResult struct {
+	Status JobStatus
+	Result any
+}
+
 type JobManager struct {
 	cache *cache.Cache
 }
@@ -22,11 +35,17 @@ func (jm *JobManager) GenerateJobID() string {
 	entropy := ulid.Monotonic(rand.New(rand.NewSource(t.UnixNano())), 0)
 	return ulid.MustNew(ulid.Timestamp(t), entropy).String()
 }
-
-func (jm *JobManager) Set(jobID string, result any) {
-	jm.cache.Set(jobID, result, cache.DefaultExpiration)
+func (jm *JobManager) SetJobResult(jobID string, status JobStatus, result any) {
+	jm.cache.Set(jobID, &JobResult{
+		Status: status,
+		Result: result,
+	}, cache.DefaultExpiration)
 }
 
-func (jm *JobManager) Get(jobID string) (any, bool) {
-	return jm.cache.Get(jobID)
+func (jm *JobManager) GetJobResult(jobID string) (*JobResult, bool) {
+	res, found := jm.cache.Get(jobID)
+	if !found {
+		return nil, false
+	}
+	return res.(*JobResult), true
 }

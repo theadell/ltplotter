@@ -36,6 +36,7 @@ func CreateExprPlotHandler(clientManager *rpc.ExpressionPlotServiceClientManager
 		}
 
 		jobID := jm.GenerateJobID()
+		jm.SetJobResult(jobID, jobmanager.StatusPending, nil)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Cache-Control", "no-store")
@@ -57,11 +58,11 @@ func CreateExprPlotHandler(clientManager *rpc.ExpressionPlotServiceClientManager
 			res, err := client.GeneratePlot(ctx, &req)
 			if err != nil {
 				slog.Error("Failed to generate plot from expression", "error", err.Error())
-				jm.Set(jobID, err)
+				jm.SetJobResult(jobID, jobmanager.StatusFailed, err)
 				return
 			}
 			slog.Info("Plot generation from expression completed successfully", "jobID", jobID)
-			jm.Set(jobID, res)
+			jm.SetJobResult(jobID, jobmanager.StatusCompleted, res)
 		}()
 	}
 }
@@ -76,22 +77,36 @@ func CreateGetExprPlotHandler(jm *jobmanager.JobManager) http.HandlerFunc {
 
 		format := r.URL.Query().Get("format")
 
-		result, ok := jm.Get(jobID)
+		result, ok := jm.GetJobResult(jobID)
 		if !ok {
 			http.Error(w, "Job Not Found", http.StatusNotFound)
 			return
 		}
-		switch res := result.(type) {
-		case error:
+
+		switch result.Status {
+		case jobmanager.StatusPending:
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Retry-After", "2")
+			w.WriteHeader(http.StatusAccepted)
+			json.NewEncoder(w).Encode(map[string]string{
+				"jobID":   jobID,
+				"status":  "pending",
+				"message": "Job is still in progress. Please try again later.",
+			})
+			return
+
+		case jobmanager.StatusFailed:
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(map[string]string{
 				"jobID":  jobID,
 				"status": "failed",
-				"error":  res.Error(),
+				"error":  result.Result.(string),
 			})
 			return
-		case *pb.ExprPlotResponse:
+
+		case jobmanager.StatusCompleted:
+			res := result.Result.(*pb.ExprPlotResponse)
 			switch format {
 			case "latex":
 				w.Header().Set("Content-Type", "application/x-latex")
@@ -108,11 +123,11 @@ func CreateGetExprPlotHandler(jm *jobmanager.JobManager) http.HandlerFunc {
 			default:
 				http.Error(w, "Unsupported format", http.StatusBadRequest)
 			}
+			return
 
 		default:
 			http.Error(w, "Unexpected result type", http.StatusInternalServerError)
-
+			return
 		}
-
 	}
 }
