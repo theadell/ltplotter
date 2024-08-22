@@ -96,12 +96,18 @@ func CreateGetExprPlotHandler(jm *jobmanager.JobManager) http.HandlerFunc {
 			return
 
 		case jobmanager.StatusFailed:
+			var errMsg string
+			if err, ok := result.Result.(error); ok {
+				errMsg = err.Error()
+			} else {
+				errMsg = "unknown error"
+			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(map[string]string{
 				"jobID":  jobID,
 				"status": "failed",
-				"error":  result.Result.(string),
+				"error":  errMsg,
 			})
 			return
 
