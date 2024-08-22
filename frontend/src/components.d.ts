@@ -7,8 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppFooter: typeof import('./components/AppFooter.vue')['default']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     PlotDisplay: typeof import('./components/plotDisplay.vue')['default']
     PlotForm2d: typeof import('./components/plotForm2d.vue')['default']
     PlotGenerator: typeof import('./components/plotGenerator.vue')['default']
