@@ -1,0 +1,32 @@
+name: build workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: 
+    branches:
+      - main
+  workflow_dispatch: 
+jobs:
+  build:
+    runs-on: ubunu-latest
+    defaults: 
+      run:
+        shell: bash
+        working-directory: ./go-services
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup Go 1.22
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Install dependencies
+        run: |
+          cd ./go-services
+          go mod download
+      - name: build services 
+        run: make build-all
+      - name: test services 
+        run: make test
+          

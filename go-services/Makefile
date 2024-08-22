@@ -34,6 +34,9 @@ gen: $(PROTO_OUT_DIR) $(JSON_SCHEMA_OUT_DIR)
 # Build all services
 build-all: $(foreach service,$(SERVICES),build-$(service))
 
+test: 
+	go test -v ./...
+
 # Build individual services
 $(foreach service,$(SERVICES),build-$(service)):
 	@$(eval SERVICE_DIR = $(subst build-,,$@))
@@ -70,4 +73,4 @@ $(foreach service,$(SERVICES),docker-push-$(service)):
 
 
 # Phony targets
-.PHONY: all gen build-all clean $(foreach service,$(SERVICES),build-$(service) run-$(service) docker-build-$(service) docker-push-$(service)) docker-build-all docker-push-all
+.PHONY: all gen build-all test clean $(foreach service,$(SERVICES),build-$(service) run-$(service) docker-build-$(service) docker-push-$(service)) docker-build-all docker-push-all
