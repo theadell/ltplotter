@@ -77,18 +77,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useTheme } from 'vuetify'
+import { useDark, useToggle } from '@vueuse/core'
 
 const drawer = ref(false)
 
-const theme = useTheme()
-const themeIcon = ref('mdi-weather-sunny')
-
-// Function to toggle the theme
-function toggleTheme () {
-  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
-  themeIcon.value = theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-weather-sunny'
-}
+const isDark = useDark()
+const themeIcon = computed(() => isDark.value ? 'mdi-weather-night' : 'mdi-weather-sunny')
+const toggleDark = useToggle(isDark)
+const toggleTheme = () => toggleDark()
 
 </script>
 

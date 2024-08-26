@@ -41,6 +41,8 @@ const lightTheme: ThemeDefinition = {
     'inverse-surface': '#2E3036',
     'inverse-on-surface': '#F0F0F7',
     'inverse-primary': '#AAC7FF',
+    'badge-bg-color': '#8E8E93',
+    'badge-text': '#111111',
   },
 
 }
@@ -74,6 +76,8 @@ const darkTheme: ThemeDefinition = {
     'inverse-surface': '#E2E2E9',
     'inverse-on-surface': '#2E3036',
     'inverse-primary': '#415F91',
+    'badge-bg-color': '#8E8E93',
+    'badge-text': '#FFFFFF',
   },
 
 }

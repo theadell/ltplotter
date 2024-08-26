@@ -1,129 +1,166 @@
 <!-- eslint-disable vue/html-quotes -->
 <template>
   <v-form ref="formRef" v-model="isFormValid">
+    <v-card
+      border="sm"
+      class="mb-4 pa-2"
+      density="compact"
+      :elevation="0.5"
+      min-height="380px"
+      rounded="lg"
+    >
+      <v-card-item>
 
-    <div>
-      <h3 class="text-xl font-medium mb-4">Math Expressions</h3>
-      <div v-for="(expr, index) in formState.plots" :key="index" class="mb-3">
-
-        <v-text-field
-          :id="'expression-' + index"
-          v-model="expr.expression"
+        <v-tabs
+          v-model="tab"
+          align-tabs="center"
+          bg-color="surface-variant"
+          class="rounded-lg pa-1 mb-4"
           density="compact"
-          :label="`Expression ${index + 1}`"
-          :rules="[expressionValidationRule]"
-          single-line
-          variant="outlined"
+          grow
+          height="44px"
         >
-          <template #prepend-inner>
-            <span class="whitespace-nowrap">y =</span>
-          </template>
-
-          <template #append>
-            <v-btn
-              v-if="formState.plots.length > 1"
-              class="-ml-2"
-              color="red-darken-3"
-              icon
-              size="small"
-              variant="text"
-              @click="removeExpression(index)"
-            >
-              <v-icon>mdi-delete-outline</v-icon>
-            </v-btn>
-          </template>
-
-        </v-text-field>
-        <div class="flex flex-row-reverse px-10 -mt-4">
-
-          <v-menu
-            :close-on-content-click="false"
+          <v-tab
+            active-color="background"
+            class="rounded text-none"
+            density="compact"
+            height="34px"
+            rounded="lg"
+            selected-class="selected-tab"
+            :value="Tabs.Expression"
           >
-            <template #activator="{ props }">
-              <v-sheet
-                v-bind="props"
-                class="rounded cursor-pointer"
-                :color="expr.color"
-                height="22px"
-                width="22px"
-              />
-            </template>
+            Expressions
+          </v-tab>
+          <v-tab
+            active-color="background"
+            class="rounded text-none"
+            density="compact"
+            height="34px"
+            rounded="lg"
+            selected-class="selected-tab"
+            :value="Tabs.Config"
+          >
+            Configuration
+          </v-tab>
+        </v-tabs>
 
-            <v-color-picker
-              v-model="expr.color"
-              mode="hex"
-            />
-          </v-menu>
+        <v-tabs-window v-model="tab" class="px-0 py-2">
+          <v-tabs-window-item :value="Tabs.Expression">
+            <div v-for="(expr, index) in formState.plots" :key="index" class="mb-3">
 
-          <v-menu>
-            <template #activator="{ props: menu }">
-              <v-tooltip location="top">
-                <template #activator="{ props: tooltip }">
-
-                  <v-sheet
-                    v-bind="mergeProps(menu, tooltip)"
-                    class="mx-4 cursor-pointer "
-                    height="24px"
-                    variant="outlined"
-                    width="30px"
-                  >
-                    <div class="w-full h-full flex items-center justify-center">
-                      <div class="w-full h-1" :style="lineStyles.find(style => style.value === expr.line_style)?.style || 'border-bottom: 2px solid;'" />
-                    </div>
-                  </v-sheet>
-                </template>
-                <span>Set line style</span>
-              </v-tooltip>
-
-            </template>
-
-            <v-list density="compact" width="100px">
-              <v-list-item
-                v-for="style in lineStyles"
-                :key="style.value"
-                :color="expr.color"
-                @click="expr.line_style = style.value"
+              <v-text-field
+                :id="'expression-' + index"
+                v-model="expr.expression"
+                density="compact"
+                :label="`Expression ${index + 1}`"
+                rounded="md"
+                :rules="[expressionValidationRule]"
+                single-line
+                variant="outlined"
               >
-                <v-tooltip location="right">
-                  <template #activator="{props}">
-                    <div v-bind="props" :style="style.style" />
+                <template #prepend-inner>
+                  <span class="whitespace-nowrap" v-html="`f<sub>${index + 1}</sub>(x) =`" />
+                </template>
+
+                <template v-if="formState.plots.length > 1" #append>
+                  <v-btn
+                    class="-ml-2"
+                    color="red-darken-3"
+                    icon
+                    size="small"
+                    variant="text"
+                    @click="removeExpression(index)"
+                  >
+                    <v-icon>mdi-delete-outline</v-icon>
+                  </v-btn>
+                </template>
+
+              </v-text-field>
+              <div :class="{'flex flex-row-reverse -mt-4': true, 'px-14': formState.plots.length > 1, 'px-2': !(formState.plots.length < 1)}">
+
+                <v-menu
+                  :close-on-content-click="false"
+                >
+                  <template #activator="{ props }">
+                    <v-sheet
+                      v-bind="props"
+                      class="rounded cursor-pointer"
+                      :color="expr.color"
+                      height="22px"
+                      width="22px"
+                    />
                   </template>
-                  <span> {{ style.label }}</span>
-                </v-tooltip>
-              </v-list-item>
-            </v-list>
-          </v-menu>
 
-        </div>
-      </div>
+                  <v-color-picker
+                    v-model="expr.color"
+                    mode="hex"
+                  />
+                </v-menu>
 
-      <v-btn
-        block
-        class="mb-5 text-subtitle-2"
-        color="blue-grey-lighten-1"
-        prepend-icon="mdi-plus"
-        variant="text"
-        @click="addExpression"
-      >
-        Add Expression
-      </v-btn>
+                <v-menu>
+                  <template #activator="{ props: menu }">
+                    <v-tooltip location="top">
+                      <template #activator="{ props: tooltip }">
 
-      <!-- Guide for Valid Expressions -->
-      <div class="text-sm mb-5">
-        <p>Examples of valid expressions:</p>
-        <ul class="list-disc pl-5">
-          <li>x^2 + 3*x - 5</li>
-          <li>log10(x) + e^x - ln(x) + sin(deg(x))</li>
-          <li>(x &lt; 0) * x^2 + (x>= 0) * (x + 1) </li>
-        </ul>
-      </div>
-    </div>
+                        <v-sheet
+                          v-bind="mergeProps(menu, tooltip)"
+                          class="mx-4 cursor-pointer "
+                          height="24px"
+                          variant="outlined"
+                          width="30px"
+                        >
+                          <div class="w-full h-full flex items-center justify-center">
+                            <div class="w-full h-1" :style="lineStyles.find(style => style.value === expr.line_style)?.style || 'border-bottom: 2px solid;'" />
+                          </div>
+                        </v-sheet>
+                      </template>
+                      <span>Set line style</span>
+                    </v-tooltip>
 
-    <!-- Plot Settings -->
-    <div>
-      <v-expansion-panels>
-        <v-expansion-panel title="Plot Configurations">
-          <v-expansion-panel-text>
+                  </template>
+
+                  <v-list density="compact" width="100px">
+                    <v-list-item
+                      v-for="style in lineStyles"
+                      :key="style.value"
+                      :color="expr.color"
+                      @click="expr.line_style = style.value"
+                    >
+                      <v-tooltip location="right">
+                        <template #activator="{props}">
+                          <div v-bind="props" :style="style.style" />
+                        </template>
+                        <span> {{ style.label }}</span>
+                      </v-tooltip>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+
+              </div>
+            </div>
+            <v-btn
+              block
+              class="mb-5 text-subtitle-2"
+              color="blue-grey-lighten-1"
+              :disabled="formState.plots.length >= MAX_EXPRS"
+              prepend-icon="mdi-plus"
+              variant="text"
+              @click="addExpression"
+            >
+              Add Expression
+            </v-btn>
+
+            <div class="text-sm mb-5">
+              <p>Examples of valid expressions:</p>
+              <ul class="list-disc pl-5">
+                <li>x^2 + 3*x - 5</li>
+                <li>log10(x) + e^x - ln(x) + sin(deg(x))</li>
+                <li>(x &lt; 0) * x^2 + (x>= 0) * (x + 1) </li>
+              </ul>
+            </div>
+
+          </v-tabs-window-item>
+          <v-tabs-window-item :value="Tabs.Config">
             <div class="rounded-lg">
               <v-row class="mb-0 pb-0" no-gutters>
                 <v-col class="mb-1" cols="12">
@@ -131,6 +168,7 @@
                     v-model="formState.title"
                     density="compact"
                     label="Plot Title"
+                    rounded="md"
                     :rules="[validTitle]"
                     variant="outlined"
                   />
@@ -141,6 +179,7 @@
                     class="pr-4"
                     density="compact"
                     label="X-Axis Label"
+                    rounded="md"
                     :rules="[validLabel]"
                     variant="outlined"
                   />
@@ -151,6 +190,7 @@
                     dense
                     density="compact"
                     label="Y-Axis Label"
+                    rounded="md"
                     :rules="[validLabel]"
                     variant="outlined"
                   />
@@ -165,6 +205,7 @@
                     dense
                     density="compact"
                     label="X-Axis Min"
+                    rounded="md"
                     :rules="[validNum]"
                     variant="outlined"
                   >
@@ -179,6 +220,7 @@
                     dense
                     density="compact"
                     label="X-Axis Max"
+                    rounded="md"
                     :rules="[validNum]"
                     variant="outlined"
                   >
@@ -193,6 +235,7 @@
                     dense
                     density="compact"
                     label="Y-Axis Min"
+                    rounded="md"
                     :rules="[validNum]"
                     variant="outlined"
                   >
@@ -206,6 +249,7 @@
                     dense
                     density="compact"
                     label="Y-Axis Max"
+                    rounded="md"
                     :rules="[validNum]"
                     variant="outlined"
                   >
@@ -222,6 +266,7 @@
                     item-value="value"
                     :items="axisLinesItemis"
                     label="Axis Lines"
+                    rounded="md"
                     variant="outlined"
                   />
                 </v-col>
@@ -233,6 +278,7 @@
                     label="Padding Around"
                     :max="50"
                     :min="0"
+                    rounded="md"
                     :rules="[validPadding]"
                     variant="outlined"
                   >
@@ -255,6 +301,7 @@
                     label="Line Width"
                     :max="12"
                     :min="1"
+                    rounded="md"
                     :rules="[validLineWidth]"
                     variant="outlined"
                   >
@@ -267,10 +314,11 @@
                 </v-col>
               </v-row>
             </div>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </div>
+          </v-tabs-window-item>
+        </v-tabs-window>
+
+      </v-card-item>
+    </v-card>
 
     <!-- Generate Plot Button -->
     <v-btn
@@ -279,10 +327,12 @@
       color="primary"
       :disabled="!isFormValid"
       :loading="loading"
-      prepend-icon="mdi-auto-fix"
+      prepend-icon="mdi-play"
+      rounded="md"
       @click="generateExpression"
     >
       Generate Plot
+
     </v-btn>
   </v-form>
 </template>
@@ -298,8 +348,16 @@ interface Props {
   loading: boolean
 }
 
+const MAX_EXPRS = 6
+
+const enum Tabs {
+  Expression = 'expression',
+  Config = 'config',
+}
+
 const { loading = false } = defineProps<Props>()
 const isFormValid = ref(true)
+const tab = ref(Tabs.Expression)
 const emit = defineEmits<{(e: 'submit', formData: PlotRequest): void }>()
 const colorPalette = [
   '#1f77b4',
@@ -440,5 +498,11 @@ watch(lineWidth, (n, _) => {
   height: 2px;
   width: 100%;
   margin: 4px 0;
+}
+
+.selected-tab {
+  background-color: rgba(var(--v-theme-background), 1);
+  color: var(--v-theme-background);
+  font-weight: 700;
 }
 </style>

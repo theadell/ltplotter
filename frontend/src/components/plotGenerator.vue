@@ -1,8 +1,8 @@
 
 <template>
-  <v-container>
-    <h2 class="text-3xl mt-6 font-bold mb-6 text-center">
-      Plot Generator
+  <div class="max-w-screen-xl mx-auto">
+    <h2 class="text-2xl mt-6 font-bold mb-6">
+      Symbolic Graphing
     </h2>
     <v-row>
       <v-col class="rounded-lg p-6" cols="12" md="6">
@@ -19,7 +19,7 @@
         />
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">
