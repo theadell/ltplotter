@@ -66,7 +66,7 @@ export default defineConfig({
     port: 4000,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'https://ltp.adelhub.com',
         changeOrigin: true,
       },
     },
