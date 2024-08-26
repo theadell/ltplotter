@@ -12,7 +12,7 @@ CA_SUBJ="/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=ltp-plotter-ca"
 generate_cert() {
     local NAME=$1
     local SUBJ=$2
-    local ALT_NAME=$3
+    local ALT_NAMES=$3
 
     echo "Generating private key for ${NAME}..."
     openssl genpkey -algorithm RSA -out $CERTS_DIR/${NAME}.key -pkeyopt rsa_keygen_bits:2048
@@ -20,9 +20,9 @@ generate_cert() {
     echo "Generating certificate signing request (CSR) for ${NAME}..."
     openssl req -new -key $CERTS_DIR/${NAME}.key -out $CERTS_DIR/${NAME}.csr -subj "$SUBJ"
 
-    if [ -n "$ALT_NAME" ]; then
+    if [ -n "$ALT_NAMES" ]; then
         echo "Signing certificate for ${NAME} with CA..."
-        openssl x509 -req -in $CERTS_DIR/${NAME}.csr -CA $CERTS_DIR/ca.crt -CAkey $CERTS_DIR/ca.key -CAcreateserial -out $CERTS_DIR/${NAME}.crt -days 365 -sha256 -extfile <(printf "subjectAltName=DNS:${ALT_NAME}")
+        openssl x509 -req -in $CERTS_DIR/${NAME}.csr -CA $CERTS_DIR/ca.crt -CAkey $CERTS_DIR/ca.key -CAcreateserial -out $CERTS_DIR/${NAME}.crt -days 365 -sha256 -extfile <(printf "subjectAltName=${ALT_NAMES}")
     else
         echo "Signing certificate for ${NAME} with CA..."
         openssl x509 -req -in $CERTS_DIR/${NAME}.csr -CA $CERTS_DIR/ca.crt -CAkey $CERTS_DIR/ca.key -CAcreateserial -out $CERTS_DIR/${NAME}.crt -days 365 -sha256
@@ -34,9 +34,9 @@ echo "Generating CA private key and certificate..."
 openssl genpkey -algorithm RSA -out $CERTS_DIR/ca.key -pkeyopt rsa_keygen_bits:2048
 openssl req -x509 -new -nodes -key $CERTS_DIR/ca.key -sha256 -days 365 -out $CERTS_DIR/ca.crt -subj "$CA_SUBJ"
 
-# Generate Server Certificates with correct SANs
-generate_cert "expression_plot_server" "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=expr-plot-service" "expr-plot-service"
-generate_cert "data_plot_server" "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=data-plot-service" "data-plot-service"
+# Generate Server Certificates with flexible SANs
+generate_cert "expression_plot_server" "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=expr-plot-service" "DNS:expr-plot-service,DNS:localhost,IP:127.0.0.1"
+generate_cert "data_plot_server" "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=data-plot-service" "DNS:data-plot-service,DNS:localhost,IP:127.0.0.1"
 generate_cert "api_gateway_client" "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=api-gateway-client" ""
 
 # Verify the certificates

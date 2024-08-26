@@ -17,6 +17,7 @@ func CreateExprPlotHandler(clientManager *rpc.ExpressionPlotServiceClientManager
 	return func(w http.ResponseWriter, r *http.Request) {
 		client, err := clientManager.GetClient()
 		if err != nil {
+			slog.Error("failed to create client for exprplot", "error", err.Error())
 			http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
 			return
 		}

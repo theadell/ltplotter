@@ -1,6 +1,6 @@
 
 <template>
-  <div class="max-w-screen-xl mx-auto">
+  <div class="max-w-screen-xl mx-auto pa-4">
     <h2 class="text-2xl mt-6 font-bold mb-6">
       Symbolic Graphing
     </h2>

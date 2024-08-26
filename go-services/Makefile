@@ -4,6 +4,10 @@ JSON_SCHEMA_OUT_DIR = gen/jsonschema
 BIN_DIR = bin
 DOCKER_REPO = adelll
 
+LOCAL_CERTS_PATH=./../certs
+LO=127.0.0.1
+EXPR_SVC_PORT=50051
+GATEWAY_SVC_PORT=8080
 # Proto files to be processed
 PROTO_FILES = $(wildcard $(PROTO_SRC_DIR)/*.proto)
 SERVICES = gateway exprplot
@@ -43,13 +47,21 @@ $(foreach service,$(SERVICES),build-$(service)):
 	@echo "Building $(SERVICE_DIR)..."
 	go build -o $(BIN_DIR)/$(SERVICE_DIR) ./$(SERVICE_DIR)/cmd/server
 
-# Run individual services
-$(foreach service,$(SERVICES),run-$(service)):
-	@$(eval SERVICE_DIR = $(subst run-,,$@))
-	@echo "Running $(SERVICE_DIR)..."
-	go run ./$(SERVICE_DIR)/cmd/server
+run-gateway:
+	go run ./gateway/cmd/server \
+		-port ${GATEWAY_SVC_PORT} \
+		-host ${LO} \
+		-certs-path $(LOCAL_CERTS_PATH) \
+		-expr-plot-url ${LO}:${EXPR_SVC_PORT}
 
-# Clean up generated files and binaries
+run-exprplot:
+	go run ./exprplot/cmd/server \
+		-port ${EXPR_SVC_PORT} \
+		-host ${LO} \
+		-certs-path $(LOCAL_CERTS_PATH) \
+		-template ./exprplot/static/expr_plot.go.tex \
+		-latex-engine tectonic
+
 clean:
 	rm -rf $(PROTO_OUT_DIR) $(JSON_SCHEMA_OUT_DIR) $(BIN_DIR)
 
@@ -73,4 +85,4 @@ $(foreach service,$(SERVICES),docker-push-$(service)):
 
 
 # Phony targets
-.PHONY: all gen build-all test clean $(foreach service,$(SERVICES),build-$(service) run-$(service) docker-build-$(service) docker-push-$(service)) docker-build-all docker-push-all
+.PHONY: all gen build-all test clean $(foreach service,$(SERVICES),build-$(service) run-gateway run-exprplot docker-build-$(service) docker-push-$(service)) docker-build-all docker-push-all

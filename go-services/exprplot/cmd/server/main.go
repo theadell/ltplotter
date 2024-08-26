@@ -12,6 +12,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"text/template"
 	"time"
@@ -24,21 +25,30 @@ import (
 
 type server struct {
 	pb.UnimplementedExpressionPlotServiceServer
-	tmpl *template.Template
+	tmpl   *template.Template
+	engine string
 }
 
-func newServer() (*server, error) {
+func newServer(c *config.Config) (*server, error) {
+
 	funcMap := template.FuncMap{
 		"axisLinesToLatex": axisLinesToLatex,
 	}
-
-	tmpl, err := template.New("expr_plot_template.go.tex").Funcs(funcMap).ParseFiles("expr_plot_template.go.tex")
+	tmpl, err := template.New(path.Base(c.Template)).Funcs(funcMap).ParseFiles(c.Template)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse template: %v", err)
 	}
+	if tmpl == nil {
+		return nil, fmt.Errorf("template is nil after parsing")
+	}
+	engine := c.LatexEngine
+	if engine != "pdflatex" && engine != "tectonic" {
+		engine = "pdflatex"
+	}
 
 	return &server{
-		tmpl: tmpl,
+		tmpl:   tmpl,
+		engine: engine,
 	}, nil
 }
 
@@ -71,13 +81,28 @@ func (s *server) GeneratePlot(ctx context.Context, req *pb.ExprPlotRequest) (*pb
 	}
 
 	pdfFilePath := filepath.Join(os.TempDir(), pdfFileName)
-	cmd := exec.Command(
-		"pdflatex",
-		"-output-directory", os.TempDir(),
-		"-no-shell-escape",
-		"-interaction=nonstopmode",
-		"-halt-on-error",
-		latexFilePath)
+	var cmd *exec.Cmd
+
+	switch s.engine {
+	case "tectonic":
+		cmd = exec.Command(
+			"tectonic",
+			"-X", "compile",
+			"--reruns", "0",
+			"--outfmt", "pdf",
+			"--untrusted",
+			latexFilePath)
+	case "pdflatex":
+		fallthrough
+	default:
+		cmd = exec.Command(
+			"pdflatex",
+			"-output-directory", os.TempDir(),
+			"-no-shell-escape",
+			"-interaction=nonstopmode",
+			"-halt-on-error",
+			latexFilePath)
+	}
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -109,7 +134,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
-	srv, err := newServer()
+	srv, err := newServer(config)
 	if err != nil {
 		log.Fatalf("Failed to initialize server: %v", err)
 	}
