@@ -24,7 +24,10 @@ docker-compose up
 - **Tectonic or pdflatex**: Required for generating LaTeX documents. Tectonic is recommended for local development.
 #### Installation
 - Generate Certificates: Generate necessary certificates by running:
-    ```./generate_certs.sh```
+    ```sh
+    chmod +x generate_certs.sh
+    ./generate_certs.sh
+    ```
 - Start Backend Services: Navigate to the `go-services` directory and use Make to start the gateway and plotting service
     ```sh 
     cd go-services

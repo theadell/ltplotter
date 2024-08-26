@@ -19,12 +19,12 @@
     {{- range .Plots }}
     \addplot [
         thick,
-        domain={{ with .Domain }}{{ . }}{{ else }}-10:10{{ end }},
-        samples={{ with .Samples }}{{ . }}{{ else }}100{{ end }},
-        {{- with .Color }}color={{ . }},{{ end }}
-        {{- with .LineStyle }}{{ . }},{{ end }}
-        {{- with .LineWidth }}line width={{ . }}{{ end }}
-    ]
+        domain={{ with .Domain }}{{ . }}{{ else }}-10:10{{ end -}},
+        samples={{ with .Samples }}{{ . }}{{ else }}100{{ end -}},
+        {{ with .Color }}color={{ . }},{{ end }}
+        {{ with .LineStyle }}{{ . }},{{ end }}
+        {{ with .LineWidth }}line width={{ . }}{{ end }}
+    ]       
     { {{ .Expression }} };
     {{- with .Legend }}\addlegendentry{ {{ . }} }{{ end }}
     {{- end }}
