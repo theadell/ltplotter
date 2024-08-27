@@ -76,11 +76,11 @@
                 </template>
 
               </v-text-field>
-              <div :class="{'flex flex-row-reverse -mt-4': true, 'px-14': formState.plots.length > 1, 'px-2': !(formState.plots.length < 1)}">
+              <div
+                :class="{ 'flex flex-row-reverse -mt-4': true, 'px-14': formState.plots.length > 1, 'px-2': !(formState.plots.length < 1) }"
+              >
 
-                <v-menu
-                  :close-on-content-click="false"
-                >
+                <v-menu :close-on-content-click="false">
                   <template #activator="{ props }">
                     <v-sheet
                       v-bind="props"
@@ -91,10 +91,7 @@
                     />
                   </template>
 
-                  <v-color-picker
-                    v-model="expr.color"
-                    mode="hex"
-                  />
+                  <v-color-picker v-model="expr.color" mode="hex" />
                 </v-menu>
 
                 <v-menu>
@@ -110,7 +107,10 @@
                           width="30px"
                         >
                           <div class="w-full h-full flex items-center justify-center">
-                            <div class="w-full h-1" :style="lineStyles.find(style => style.value === expr.line_style)?.style || 'border-bottom: 2px solid;'" />
+                            <div
+                              class="w-full h-1"
+                              :style="lineStyles.find(style => style.value === expr.line_style)?.style || 'border-bottom: 2px solid;'"
+                            />
                           </div>
                         </v-sheet>
                       </template>
@@ -127,7 +127,7 @@
                       @click="expr.line_style = style.value"
                     >
                       <v-tooltip location="right">
-                        <template #activator="{props}">
+                        <template #activator="{ props }">
                           <div v-bind="props" :style="style.style" />
                         </template>
                         <span> {{ style.label }}</span>
@@ -196,10 +196,7 @@
                   />
 
                 </v-col>
-                <v-col
-                  class="pr-4 mb-1"
-                  cols="6"
-                >
+                <v-col class="pr-4 mb-1" cols="6">
                   <v-number-input
                     v-model="formState.x_min"
                     dense
@@ -302,7 +299,8 @@
                     label="Grid"
                     rounded="md"
                     variant="outlined"
-                  />                </v-col>
+                  />
+                </v-col>
                 <v-col cols="6">
                   <v-number-input
                     v-model="lineWidth"
@@ -322,8 +320,50 @@
                     </template>
                   </v-number-input>
                 </v-col>
+
               </v-row>
+              <v-row class="mb-0 pb-0" no-gutters>
+
+                <v-col>
+
+                  <v-checkbox v-model="legend" class="-ml-2 -mt-2" hide-details label="Legend" />
+                </v-col>
+              </v-row>
+              <v-row v-if="legend" class="mb-0 pb-0 mt-0" no-gutters>
+                <v-col>
+
+                  <v-select
+                    v-if="legend"
+                    v-model="formState.legend"
+                    class="mr-4"
+                    dense
+                    density="compact"
+                    item-title="title"
+                    item-value="value"
+                    :items="legendPositionItems"
+                    label="Legend Position"
+                    rounded="md"
+                    variant="outlined"
+                  />
+                </v-col>
+                <v-col v-for="(expr, index) in formState.plots" :key="index" cols="6">
+                  <v-text-field
+                    v-model="expr.legend"
+                    :class="{ 'mr-4': index % 2 != 0 }"
+                    clearable
+                    dense
+                    density="compact"
+                    rounded="md"
+                    variant="outlined"
+                  >
+                    <template #label>
+                      <span v-html="`Legend For f<sub>${index + 1}</sub>(x)`" />
+                    </template>
+                  </v-text-field>
+
+                </v-col></v-row>
             </div>
+
           </v-tabs-window-item>
         </v-tabs-window>
 
@@ -348,9 +388,8 @@
 </template>
 
 <script setup lang="ts">
-import { AxisLines, Grid, PlotRequest } from '@/lib/models/plot'
+import { AxisLines, Grid, LegendPosition, PlotRequest } from '@/lib/models/plot'
 import { validateExpression } from '@/lib/utils/expressionValidator'
-
 import { mergeProps, ref } from 'vue'
 import { VForm } from 'vuetify/components'
 
@@ -386,7 +425,7 @@ const lineStyles = [
 ]
 
 let colorIndex = 1
-
+const legend = ref(false)
 const formState = ref<PlotRequest>({
   title: '',
   x_label: '',
@@ -411,6 +450,14 @@ const axisLinesItemis = [
   { value: AxisLines.Left, title: 'left' },
   { value: AxisLines.Middle, title: 'middle' },
   { value: AxisLines.Right, title: 'right' },
+]
+
+const legendPositionItems = [
+  { value: LegendPosition.NorthEast, title: 'Up Right' },
+  { value: LegendPosition.NorthWest, title: 'Up Left' },
+  { value: LegendPosition.SouthEast, title: 'Bottom Right' },
+  { value: LegendPosition.SouthhWest, title: 'Bottom Left' },
+  { value: LegendPosition.OuterNorthEast, title: 'Outer up right' },
 ]
 
 const expressionValidationRule = (expression: string): true | string => {
@@ -480,7 +527,7 @@ const generateExpression = () => {
   }
 }
 
-const removeExpression = (index : number) => {
+const removeExpression = (index: number) => {
   if (formState.value.plots.length > 1) {
     formState.value.plots.splice(index, 1)
     colorIndex = formState.value.plots.length % colorPalette.length
@@ -502,6 +549,16 @@ watch(lineWidth, (n, _) => {
     plot.line_width = `${n}pt`
   })
 })
+
+watch(legend, enabled => {
+  if (!enabled) {
+    formState.value.legend = LegendPosition.None
+    formState.value.plots.map(plot => plot.legend = '')
+  } else {
+    formState.value.legend = LegendPosition.NorthEast
+    formState.value.plots.map((plot, index) => plot.legend = `f${index}(x)`)
+  }
+})
 </script>
 
 <style scoped>
@@ -515,5 +572,15 @@ watch(lineWidth, (n, _) => {
   background-color: rgba(var(--v-theme-background), 1);
   color: var(--v-theme-background);
   font-weight: 700;
+}
+
+/* Override CSS variables for the expansion panel */
+.v-expansion-panel-title {
+  padding: 0px 16px;
+}
+
+.v-expansion-panel-text__wrapper {
+  padding: 0px;
+  background-color: red;
 }
 </style>

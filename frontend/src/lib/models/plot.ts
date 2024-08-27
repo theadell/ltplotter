@@ -23,6 +23,15 @@ export enum Grid {
   BOTH = 'both',
 }
 
+export enum LegendPosition {
+  SouthhWest= 'south west',
+  SouthEast= 'south east',
+  NorthWest = 'north west',
+  NorthEast = 'north east',
+  OuterNorthEast = 'outer north east',
+  None = '',
+}
+
 export interface PlotRequest {
     title?: string
     x_label?: string
@@ -34,6 +43,7 @@ export interface PlotRequest {
     grid?: Grid
     axis_lines?: AxisLines
     border?: number
+    legend?: LegendPosition
     plots: PlotElement[]
   }
 
