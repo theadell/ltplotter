@@ -5,6 +5,9 @@
   "protoc": {
     "path": "/opt/homebrew/bin/protoc",
     "compile_on_save": false,
-    "options": ["--proto_path=proto3"]
+    "options": [
+      "--proto_path=proto3",
+      "--proto_path=vendor/protovalidate",
+    ],
   }
 }

@@ -26,12 +26,14 @@ $(BIN_DIR):
 
 gen: $(PROTO_OUT_DIR) $(JSON_SCHEMA_OUT_DIR)
 	protoc --proto_path=$(PROTO_SRC_DIR) \
+	       -I ../vendor/protovalidate \
 	       --go_out=$(PROTO_OUT_DIR) \
 	       --go_opt=paths=source_relative \
 	       --go-grpc_out=$(PROTO_OUT_DIR) \
 	       --go-grpc_opt=paths=source_relative \
 	       $(PROTO_FILES)
 	protoc --proto_path=$(PROTO_SRC_DIR) \
+		       -I ../vendor/protovalidate \
 	       --jsonschema_out=$(JSON_SCHEMA_OUT_DIR) \
 	       $(PROTO_FILES)
 

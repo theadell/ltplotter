@@ -291,8 +291,18 @@
                 </v-col>
 
                 <v-col cols="6">
-                  <v-checkbox v-model="formState.grid" class="mt-0" density="compact" label="Show Grid" />
-                </v-col>
+                  <v-select
+                    v-model="formState.grid"
+                    class="pr-4"
+                    dense
+                    density="compact"
+                    item-title="title"
+                    item-value="value"
+                    :items="Object.values(Grid)"
+                    label="Grid"
+                    rounded="md"
+                    variant="outlined"
+                  />                </v-col>
                 <v-col cols="6">
                   <v-number-input
                     v-model="lineWidth"
@@ -338,7 +348,7 @@
 </template>
 
 <script setup lang="ts">
-import { AxisLines, PlotRequest } from '@/lib/models/plot'
+import { AxisLines, Grid, PlotRequest } from '@/lib/models/plot'
 import { validateExpression } from '@/lib/utils/expressionValidator'
 
 import { mergeProps, ref } from 'vue'
@@ -385,8 +395,8 @@ const formState = ref<PlotRequest>({
   x_max: undefined,
   y_min: undefined,
   y_max: undefined,
-  grid: false,
-  axis_lines: AxisLines.BOX,
+  grid: Grid.None,
+  axis_lines: AxisLines.Box,
   border: 5,
   plots: [{ expression: '', color: colorPalette[0], line_style: 'solid', line_width: '1pt' }],
 })
@@ -395,11 +405,12 @@ const formRef = ref<VForm | null>(null)
 const lineWidth = ref(1)
 
 const axisLinesItemis = [
-  { value: AxisLines.BOX, title: 'box' },
-  { value: AxisLines.CENTER, title: 'center' },
-  { value: AxisLines.LEFT, title: 'left' },
-  { value: AxisLines.MIDDLE, title: 'middle' },
-  { value: AxisLines.RIGHT, title: 'right' },
+  { value: AxisLines.None, title: 'none' },
+  { value: AxisLines.Box, title: 'box' },
+  { value: AxisLines.Center, title: 'center' },
+  { value: AxisLines.Left, title: 'left' },
+  { value: AxisLines.Middle, title: 'middle' },
+  { value: AxisLines.Right, title: 'right' },
 ]
 
 const expressionValidationRule = (expression: string): true | string => {

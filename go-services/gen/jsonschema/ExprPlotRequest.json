@@ -23,44 +23,29 @@
                     "type": "integer"
                 },
                 "axis_lines": {
-                    "enum": [
-                        "AXIS_LINES_BOX",
-                        0,
-                        "AXIS_LINES_LEFT",
-                        1,
-                        "AXIS_LINES_RIGHT",
-                        2,
-                        "AXIS_LINES_MIDDLE",
-                        3,
-                        "AXIS_LINES_CENTER",
-                        4,
-                        "AXIS_LINES_NONE",
-                        5
-                    ],
-                    "oneOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "integer"
-                        }
-                    ],
-                    "title": "Axis Lines"
+                    "type": "string"
                 },
                 "border": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "figure padding"
                 },
                 "grid": {
-                    "type": "boolean"
+                    "type": "string"
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Title of the plot"
+                },
+                "legend": {
+                    "type": "string",
+                    "description": "Legend position"
                 },
                 "plots": {
                     "items": {
                         "$ref": "#/definitions/plot.PlotExpression"
                     },
-                    "type": "array"
+                    "type": "array",
+                    "description": "Expressions to plot"
                 }
             },
             "additionalProperties": true,
@@ -70,22 +55,27 @@
         "plot.PlotExpression": {
             "properties": {
                 "expression": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "PGF/Tikz Expression"
                 },
                 "domain": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Plot line Domain. i.e. -10:10"
                 },
                 "samples": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "number of samples per line"
                 },
                 "color": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "line color"
                 },
                 "line_style": {
                     "type": "string"
                 },
                 "line_width": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "line width in points i.e. 1.5pt"
                 },
                 "legend": {
                     "type": "string"

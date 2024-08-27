@@ -13,14 +13,15 @@ post {
 body:json {
   {
     "title": "Sine vs Cosine",
-    "axis_lines": 1, 
+    "axis_lines": "box", 
     "x_label": "Time (s)",
     "y_label": "Amplitude",
     "x_min": 0,
     "x_max": 7,
     "y_min": -1,
     "y_max": 1,
-    "grid": true,
+    "grid": "major",
+    "legend": "south west",
     "border": 10,
     "plots": [
       {
@@ -43,4 +44,8 @@ body:json {
       }
     ]
   }
+}
+
+docs {
+  Valid legend values: south west|south east|north west|north east|outer north east
 }

@@ -6,16 +6,16 @@
 \begin{tikzpicture}
     \begin{axis}[
         {{- with .Title }}title={ {{ . }} },{{ end }}
-        axis lines = {{ axisLinesToLatex .AxisLines }},
+        {{- with .AxisLines }}axis lines={ {{ . }} },{{ end }}
+        {{- with .Legend }}legend pos={ {{ . }} },{{ end }}
         xlabel = ${{ with .XLabel }}{{ . }}{{ else }}x{{ end }}$,
         ylabel = ${{ with .YLabel }}{{ . }}{{ else }}y{{ end }}$,
         {{- with .XMin }}xmin={{ . }},{{ end }}
         {{- with .XMax }}xmax={{ . }},{{ end }}
         {{- with .YMin }}ymin={{ . }},{{ end }}
         {{- with .YMax }}ymax={{ . }},{{ end }}
-        {{- if .Grid }}grid=major,{{ end }}
-        legend pos=outer north east,
-    ]
+        {{- with .Grid }}grid={{ . }},{{ end }}
+          ]
     {{- range .Plots }}
     \addplot [
         thick,

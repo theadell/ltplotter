@@ -9,11 +9,14 @@ import (
 	"ltplotter/gateway/pkg/expr/validation"
 	"ltplotter/gateway/pkg/jobmanager"
 	"ltplotter/gen/pb"
+	"ltplotter/utils"
 	"net/http"
 	"time"
+
+	"github.com/bufbuild/protovalidate-go"
 )
 
-func CreateExprPlotHandler(clientManager *rpc.ExpressionPlotServiceClientManager, jm *jobmanager.JobManager) http.HandlerFunc {
+func CreateExprPlotHandler(clientManager *rpc.ExpressionPlotServiceClientManager, jm *jobmanager.JobManager, v *protovalidate.Validator) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		client, err := clientManager.GetClient()
 		if err != nil {
@@ -26,13 +29,18 @@ func CreateExprPlotHandler(clientManager *rpc.ExpressionPlotServiceClientManager
 
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			slog.Error("failed to decode request body", "error", err.Error())
-			http.Error(w, "Bad Request", http.StatusBadRequest)
+			utils.WriteErrorResponse(w, http.StatusBadRequest, err.Error(), nil)
+			return
+		}
+		if err = v.Validate(&req); err != nil {
+			slog.Error("invalid request", "validation error", err.Error(), "request", &req)
+			utils.WriteErrorResponse(w, http.StatusBadRequest, err.Error(), nil)
 			return
 		}
 
 		if err := validation.ValidateRequest(&req); err != nil {
-			slog.Warn("recieved invalid or potentially malicious request", "validation error", err.Error(), "request", &req)
-			http.Error(w, "Bad Request", http.StatusBadRequest)
+			slog.Error("invalid or potentially malicious request", "validation error", err.Error(), "request", &req)
+			utils.WriteErrorResponse(w, http.StatusBadRequest, err.Error(), nil)
 			return
 		}
 

@@ -5,22 +5,27 @@
         "PlotExpression": {
             "properties": {
                 "expression": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "PGF/Tikz Expression"
                 },
                 "domain": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Plot line Domain. i.e. -10:10"
                 },
                 "samples": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "number of samples per line"
                 },
                 "color": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "line color"
                 },
                 "line_style": {
                     "type": "string"
                 },
                 "line_width": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "line width in points i.e. 1.5pt"
                 },
                 "legend": {
                     "type": "string"

@@ -8,12 +8,20 @@ export interface PlotElement {
     legend?: string
   }
 export enum AxisLines {
-    BOX= 0,
-    LEFT,
-    RIGHT,
-    MIDDLE,
-    CENTER,
-  }
+  None = 'none',
+  Box = 'box',
+  Left = 'left',
+  Middle = 'middle',
+  Center = 'center',
+  Right = 'right',
+  Empty = ''
+}
+export enum Grid {
+  None = 'none',
+  MAJOR = 'major',
+  MINOR = 'minor',
+  BOTH = 'both',
+}
 
 export interface PlotRequest {
     title?: string
@@ -23,7 +31,7 @@ export interface PlotRequest {
     x_max?: number
     y_min?: number
     y_max?: number
-    grid?: boolean
+    grid?: Grid
     axis_lines?: AxisLines
     border?: number
     plots: PlotElement[]
