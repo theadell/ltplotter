@@ -25,4 +25,21 @@
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Models\**" />
+    <None Remove="ca.crt" />
+  </ItemGroup>
+
 </Project>

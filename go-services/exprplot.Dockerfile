@@ -11,6 +11,7 @@ RUN CGO_ENABLED=0 go build -o app ./exprplot/cmd/server/main.go
 
 FROM ubuntu:22.04
 
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     texlive-latex-base \
