@@ -15,5 +15,4 @@ EXPOSE 5001
 
 RUN apt-get update && apt-get install -y texlive-latex-base texlive-latex-extra 
     
-    
 ENTRYPOINT ["dotnet", "TimeSeriesPlotter.dll"]
