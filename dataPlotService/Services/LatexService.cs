@@ -6,30 +6,8 @@ using Serilog;
 
 namespace PlotService.Services;
 
-public partial class LatexService : ILatexService
+public class LatexService : ILatexService
 {
-
-    [GeneratedRegex(@"([\\&%$#_{}~^<>])", RegexOptions.Compiled)]
-    private static partial Regex EscapeRegex();
-    
-    private static readonly Regex EscapePattern = EscapeRegex();
-
-    private static readonly Dictionary<string, string> ConversionMap = new()
-    {
-        { @"\", @"\textbackslash{}" },
-        { "&",  @"\&" },
-        { "%",  @"\%" },
-        { "$",  @"\$" },
-        { "#",  @"\#" },
-        { "_",  @"\_" },
-        { "{",  @"\{" },
-        { "}",  @"\}" },
-        { "~",  @"\textasciitilde{}" },
-        { "^",  @"\^{} " },
-        { "<",  @"\textless{}" },
-        { ">",  @"\textgreater{}" }
-    };
-    
     public string GenerateLatex(PlotRequest plotRequest)
     {
         try
@@ -39,14 +17,14 @@ public partial class LatexService : ILatexService
             sb.AppendLine(@"\usepackage{pgfplots}");
             sb.AppendLine(@"\begin{document}");
             sb.AppendLine(@"\begin{tikzpicture}");
-            sb.AppendLine(@$"\begin{{axis}}[title={{{Escape(plotRequest.Metadata.Title)}}}, xlabel={{{Escape(plotRequest.Metadata.Labels.X)}}}, ylabel={{{Escape(plotRequest.Metadata.Labels.Y)}}}, legend pos=outer north east]");
+            sb.AppendLine(@$"\begin{{axis}}[title={{{plotRequest.Metadata.Title}}}, xlabel={{{plotRequest.Metadata.Labels.X}}}, ylabel={{{plotRequest.Metadata.Labels.Y}}}, legend pos=outer north east]");
             
             for (var i = 0; i < plotRequest.Y.Count; i++)
             {
                 sb.Append(@"\addplot coordinates {");
                 sb.Append(string.Join(' ', plotRequest.X.Zip(plotRequest.Y[i].Values).Select(pair => $"({pair.Item1}, {pair.Item2})")));
                 sb.AppendLine("};");
-                sb.AppendLine(@$"\addlegendentry{{{Escape(plotRequest.Metadata.Legends[i])}}}");
+                sb.AppendLine(@$"\addlegendentry{{{plotRequest.Metadata.Legends[i]}}}");
             }
 
             sb.AppendLine(@"\end{axis}");
@@ -99,10 +77,5 @@ public partial class LatexService : ILatexService
             Log.Error("Exception while compiling latex: {@ex}", ex);
             return [];
         }
-    }
-    
-    private static string Escape(string s)
-    {
-        return EscapePattern.Replace(s, match => ConversionMap[match.Value]);
     }
 }
