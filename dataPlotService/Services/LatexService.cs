@@ -1,17 +1,46 @@
 using System.Diagnostics;
-using Google.Protobuf.Collections;
-using Plot;
-using PlotService.Models;
+using System.Text.RegularExpressions;
+using PlotService.Extensions;
+using PlotService.Protobuf;
 using Serilog;
 
 namespace PlotService.Services;
 
-public class LatexService : ILatexService
+public partial class LatexService : ILatexService
 {
+    [GeneratedRegex(@"([\\&%$#_{}~^<>])", RegexOptions.Compiled)]
+    private static partial Regex EscapeRegex();
+
+    private static readonly Regex EscapePattern = EscapeRegex();
+
+    private static readonly Dictionary<string, string> ConversionMap = new()
+    {
+        { @"\", @"\textbackslash{}" },
+        { "&",  @"\&" },
+        { "%",  @"\%" },
+        { "$",  @"\$" },
+        { "#",  @"\#" },
+        { "_",  @"\_" },
+        { "{",  @"\{" },
+        { "}",  @"\}" },
+        { "~",  @"\textasciitilde{}" },
+        { "^",  @"\^{} " },
+        { "<",  @"\textless{}" },
+        { ">",  @"\textgreater{}" }
+    };
+    
     public string GenerateLatex(PlotRequest plotRequest)
     {
         try
         {
+            plotRequest.Metadata.Title = Escape(plotRequest.Metadata.Title); 
+            plotRequest.Metadata.Labels.X = Escape(plotRequest.Metadata.Labels.X); 
+            plotRequest.Metadata.Labels.Y = Escape(plotRequest.Metadata.Labels.Y);
+            for (var i = 0; i < plotRequest.Metadata.Legends.Count; i++)
+            {
+                plotRequest.Metadata.Legends[i] = Escape(plotRequest.Metadata.Legends[i]);
+            }
+            
             var sb = new System.Text.StringBuilder();
             sb.AppendLine(@"\documentclass{standalone}");
             sb.AppendLine(@"\usepackage{pgfplots}");
@@ -30,37 +59,7 @@ public class LatexService : ILatexService
             sb.AppendLine(@"\end{axis}");
             sb.AppendLine(@"\end{tikzpicture}");
             sb.AppendLine(@"\end{document}");
-            return sb.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Exception while generating latex string: {@ex}", ex);
-            return string.Empty;
-        }
-    }
 
-    public string GenerateLatex(PlotRequestRest requestRest)
-    {
-        try
-        {
-            var sb = new System.Text.StringBuilder();
-            sb.AppendLine(@"\documentclass{standalone}");
-            sb.AppendLine(@"\usepackage{pgfplots}");
-            sb.AppendLine(@"\begin{document}");
-            sb.AppendLine(@"\begin{tikzpicture}");
-            sb.AppendLine(@$"\begin{{axis}}[title={{{requestRest.Metadata.Title}}}, xlabel={{{requestRest.Metadata.Labels.X}}}, ylabel={{{requestRest.Metadata.Labels.Y}}}, legend pos=outer north east]");
-            
-            for (var i = 0; i < requestRest.Y.Count; i++)
-            {
-                sb.Append(@"\addplot coordinates {");
-                sb.Append(string.Join(' ', requestRest.X.Zip(requestRest.Y[i]).Select(pair => $"({pair.Item1}, {pair.Item2})")));
-                sb.AppendLine("};");
-                sb.AppendLine(@$"\addlegendentry{{{requestRest.Metadata.Legends[i]}}}");
-            }
-
-            sb.AppendLine(@"\end{axis}");
-            sb.AppendLine(@"\end{tikzpicture}");
-            sb.AppendLine(@"\end{document}");
             return sb.ToString();
         }
         catch (Exception ex)
@@ -95,8 +94,8 @@ public class LatexService : ILatexService
                 process?.WaitForExit();
             }
 
-            var pdfFile = Path.Combine(tempDir, "plot.pdf");
-            var pdfBytes = File.ReadAllBytes(pdfFile);
+            var pdfBytes = Path.Combine(tempDir, "plot.pdf")
+                .Pipe(File.ReadAllBytes);
 
             Directory.Delete(tempDir, true);
 
@@ -107,5 +106,10 @@ public class LatexService : ILatexService
             Log.Error("Exception while compiling latex: {@ex}", ex);
             return [];
         }
+    }
+    
+    private static string Escape(string s)
+    {
+        return EscapePattern.Replace(s, match => ConversionMap[match.Value]);
     }
 }

@@ -1,11 +1,8 @@
-using PlotService.Models;
-using Plot;
-
+using PlotService.Protobuf;
 namespace PlotService.Services;
 
 public interface ILatexService
 {
     string GenerateLatex(PlotRequest plotRequest);
-    string GenerateLatex(PlotRequestRest requestRest);
     byte[] CompileLatex(string latex);
 }
