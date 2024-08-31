@@ -1,9 +1,12 @@
 .DS_Store
 bin/
+obj/
 *.exe
 *.out
 *.dll
 *.so
+
+.idea/
 
 go.work
 go.work.sum
