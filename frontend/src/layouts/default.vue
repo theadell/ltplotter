@@ -21,7 +21,7 @@
         <v-btn class="text-none" to="/">
           Symbolic
         </v-btn>
-        <v-btn class="text-none" to="/numerical">
+        <v-btn class="text-none" to="/data">
           Numerical
         </v-btn>
         <v-btn class="text-none" to="/ltspice">

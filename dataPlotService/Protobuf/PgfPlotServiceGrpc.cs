@@ -11,6 +11,7 @@ namespace PlotService.Protobuf
         {
             return request
                 .Pipe(latexService.GenerateLatex)
+                .Pipe(Console.WriteLine)
                 .Pipe(latexService.CompileLatex)
                 .Pipe(ByteString.CopyFrom)
                 .Pipe(pdf => new PlotResponse { Pdf = pdf })

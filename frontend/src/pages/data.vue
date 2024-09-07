@@ -1,7 +1,7 @@
 <template>
-  <Plotter />
+  <dataPlotGenerator />
 </template>
 
 <script lang="ts" setup>
-//
+  //
 </script>
