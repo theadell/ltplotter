@@ -1,15 +1,13 @@
 import { HTTPError } from "ky"
-import { PlotJobResponse, PlotRequest } from "../models/plot"
-import { escapePlotRequestStrings } from "../utils/plotExpressionHelpers"
+import { DataPlotRequest, PlotJobResponse } from "../models/plot"
 import apiClient from "./client"
 import { PlotError } from "../models/plotError"
 
-const plotApi = {
-  dispatchPlotJob: async (requestBody: PlotRequest): Promise<string> => {
+const dataPlotApi = {
+  dispatchPlotJob: async (requestBody: DataPlotRequest): Promise<string> => {
     try {
-      const r = escapePlotRequestStrings(requestBody)
       const response = await apiClient
-        .post("plot/expr", { json: r })
+        .post("plot/data", { json: r })
         .json<PlotJobResponse>()
       return response.jobID
     } catch (error: any) {
@@ -21,7 +19,7 @@ const plotApi = {
     format: "pdf" | "latex"
   ): Promise<Blob | string> => {
     try {
-      const response = await apiClient.get(`plot/expr/${jobId}`, {
+      const response = await apiClient.get(`plot/data/${jobId}`, {
         searchParams: { format },
       })
 
@@ -33,28 +31,13 @@ const plotApi = {
     }
   },
   plotExpression: async (
-    requestBody: PlotRequest,
-    waitTime: number = 1000
-  ): Promise<{ pdfBlob: Blob; latexSource: string }> => {
+    requestBody: DataPlotRequest,
+  ): Promise<Blob> => {
     try {
-      const r = escapePlotRequestStrings(requestBody)
       const jobResponse = await apiClient
-        .post("plot/expr", { json: r })
-        .json<PlotJobResponse>()
-      const jobId = jobResponse.jobID
+        .post("plot/data", { json: requestBody })
 
-      await new Promise(resolve => setTimeout(resolve, waitTime))
-
-      const [pdfBlob, latexSource] = await Promise.all([
-        apiClient
-          .get(`plot/expr/${jobId}`, { searchParams: { format: "pdf" } })
-          .blob(),
-        apiClient
-          .get(`plot/expr/${jobId}`, { searchParams: { format: "latex" } })
-          .text(),
-      ])
-
-      return { pdfBlob, latexSource }
+      return jobResponse.blob()
     } catch (error: any) {
       if (error instanceof HTTPError) {
         if (error.response.status === 400) {
@@ -77,4 +60,4 @@ const plotApi = {
   },
 }
 
-export default plotApi
+export default dataPlotApi

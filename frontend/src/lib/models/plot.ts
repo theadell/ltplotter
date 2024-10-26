@@ -45,9 +45,29 @@ export interface PlotRequest {
     border?: number
     legend?: LegendPosition
     plots: PlotElement[]
-  }
+}
+
+interface Labels {
+  x: string;
+  y: string;
+}
+
+interface DataSeries {
+  values: number[];
+}
+
+interface Metadata {
+  title: string;
+  labels: Labels;
+  legends: string[];
+}
+
+export interface DataPlotRequest {
+  x: number[];
+  y: DataSeries[];
+  metadata: Metadata;
+}
 
 export interface PlotJobResponse {
     jobID: string;
 }
-

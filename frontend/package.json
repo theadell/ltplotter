@@ -17,6 +17,7 @@
     "ky": "^1.5.0",
     "mathjs": "^13.0.3",
     "roboto-fontface": "*",
+    "ts-proto": "^2.2.4",
     "vue": "^3.4.31",
     "vuetify": "^3.6.11"
   },

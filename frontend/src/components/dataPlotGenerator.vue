@@ -5,7 +5,7 @@
     </h2>
     <v-row>
       <v-col class="rounded-lg p-6" cols="12" md="6">
-        <PlotForm2d :error="status.error" :loading="status.loading" @submit="onFormSubmit" />
+        <DataPlotForm @submit="onFormSubmit" />
       </v-col>
 
       <v-col class="flex flex-col items-center" cols="12" md="6">
@@ -22,10 +22,10 @@
 </template>
 
 <script setup lang="ts">
-import { PlotRequest } from '@/lib/models/plot'
-import api from '@/lib/api/plotApi'
-import { setPlotRequestDomainFromXBounds } from '@/lib/utils/plotExpressionHelpers'
-import { PlotError } from '@/lib/models/plotError'
+import { DataPlotRequest } from "@/lib/models/plot"
+import api from "@/lib/api/dataPlotApi"
+import { PlotError } from "@/lib/models/plotError"
+import DataPlotForm from "@/components/dataPlotForm.vue"
 
 interface Status {
   loading: boolean
@@ -42,24 +42,21 @@ const resetState = () => {
   status.value.error = false
   status.value.errorMessage = null
   pdfURL.value = null
-  latexCode.value = null
 }
-const onFormSubmit = async (plotRequest : PlotRequest) => {
-  const payload = setPlotRequestDomainFromXBounds(plotRequest)
+const onFormSubmit = async (plotRequest : DataPlotRequest) => {
+  const payload = plotRequest
   resetState()
   try {
-    const { pdfBlob, latexSource } = await api.plotExpression(payload)
+    const pdfBlob = await api.plotExpression(payload)
     pdfURL.value = URL.createObjectURL(pdfBlob)
-    latexCode.value = latexSource
   } catch (error) {
     status.value.error = true
     pdfURL.value = null
-    latexCode.value = null
     if (error instanceof PlotError) {
       status.value.errorMessage = error.message
     } else {
-      console.error('An unexpected error occurred:', error)
-      status.value.errorMessage = 'An unexpected error occurred'
+      console.error("An unexpected error occurred:", error)
+      status.value.errorMessage = "An unexpected error occurred"
     }
   } finally {
     status.value.loading = false

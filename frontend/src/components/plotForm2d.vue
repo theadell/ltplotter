@@ -388,10 +388,10 @@
 </template>
 
 <script setup lang="ts">
-import { AxisLines, Grid, LegendPosition, PlotRequest } from '@/lib/models/plot'
-import { validateExpression } from '@/lib/utils/expressionValidator'
-import { mergeProps, ref } from 'vue'
-import { VForm } from 'vuetify/components'
+import { AxisLines, Grid, LegendPosition, PlotRequest } from "@/lib/models/plot"
+import { validateExpression } from "@/lib/utils/expressionValidator"
+import { mergeProps, ref } from "vue"
+import { VForm } from "vuetify/components"
 
 interface Props {
   loading: boolean
@@ -400,36 +400,36 @@ interface Props {
 const MAX_EXPRS = 6
 
 const enum Tabs {
-  Expression = 'expression',
-  Config = 'config',
+  Expression = "expression",
+  Config = "config",
 }
 
 const { loading = false } = defineProps<Props>()
 const isFormValid = ref(true)
 const tab = ref(Tabs.Expression)
-const emit = defineEmits<{(e: 'submit', formData: PlotRequest): void }>()
+const emit = defineEmits<{(e: "submit", formData: PlotRequest): void }>()
 const colorPalette = [
-  '#1f77b4',
-  '#2ca02c',
-  '#d62728',
-  '#9467bd',
-  '#8c564b',
-  '#e377c2',
+  "#1f77b4",
+  "#2ca02c",
+  "#d62728",
+  "#9467bd",
+  "#8c564b",
+  "#e377c2",
 ]
 
 const lineStyles = [
-  { value: 'solid', label: 'Solid', style: 'border-bottom: 2px solid;' },
-  { value: 'dashed', label: 'Dashed', style: 'border-bottom: 2px dashed;' },
-  { value: 'dotted', label: 'Dotted', style: 'border-bottom: 2px dotted;' },
-  { value: 'dashdotdotted', label: 'Dash-Dot-Dotted', style: 'border-bottom: 2px dashed; border-bottom-style: dashdotdotted;' },
+  { value: "solid", label: "Solid", style: "border-bottom: 2px solid;" },
+  { value: "dashed", label: "Dashed", style: "border-bottom: 2px dashed;" },
+  { value: "dotted", label: "Dotted", style: "border-bottom: 2px dotted;" },
+  { value: "dashdotdotted", label: "Dash-Dot-Dotted", style: "border-bottom: 2px dashed; border-bottom-style: dashdotdotted;" },
 ]
 
 let colorIndex = 1
 const legend = ref(false)
 const formState = ref<PlotRequest>({
-  title: '',
-  x_label: '',
-  y_label: '',
+  title: "",
+  x_label: "",
+  y_label: "",
   x_min: undefined,
   x_max: undefined,
   y_min: undefined,
@@ -437,32 +437,32 @@ const formState = ref<PlotRequest>({
   grid: Grid.None,
   axis_lines: AxisLines.Box,
   border: 5,
-  plots: [{ expression: '', color: colorPalette[0], line_style: 'solid', line_width: '1pt' }],
+  plots: [{ expression: "", color: colorPalette[0], line_style: "solid", line_width: "1pt" }],
 })
 
 const formRef = ref<VForm | null>(null)
 const lineWidth = ref(1)
 
 const axisLinesItemis = [
-  { value: AxisLines.None, title: 'none' },
-  { value: AxisLines.Box, title: 'box' },
-  { value: AxisLines.Center, title: 'center' },
-  { value: AxisLines.Left, title: 'left' },
-  { value: AxisLines.Middle, title: 'middle' },
-  { value: AxisLines.Right, title: 'right' },
+  { value: AxisLines.None, title: "none" },
+  { value: AxisLines.Box, title: "box" },
+  { value: AxisLines.Center, title: "center" },
+  { value: AxisLines.Left, title: "left" },
+  { value: AxisLines.Middle, title: "middle" },
+  { value: AxisLines.Right, title: "right" },
 ]
 
 const legendPositionItems = [
-  { value: LegendPosition.NorthEast, title: 'Up Right' },
-  { value: LegendPosition.NorthWest, title: 'Up Left' },
-  { value: LegendPosition.SouthEast, title: 'Bottom Right' },
-  { value: LegendPosition.SouthhWest, title: 'Bottom Left' },
-  { value: LegendPosition.OuterNorthEast, title: 'Outer up right' },
+  { value: LegendPosition.NorthEast, title: "Up Right" },
+  { value: LegendPosition.NorthWest, title: "Up Left" },
+  { value: LegendPosition.SouthEast, title: "Bottom Right" },
+  { value: LegendPosition.SouthhWest, title: "Bottom Left" },
+  { value: LegendPosition.OuterNorthEast, title: "Outer up right" },
 ]
 
 const expressionValidationRule = (expression: string): true | string => {
-  if (expression.trim() === '') {
-    return 'Expression cannot be empty'
+  if (expression.trim() === "") {
+    return "Expression cannot be empty"
   }
   const result = validateExpression(expression)
   return result.ok ? true : result.error
@@ -472,15 +472,15 @@ const validNum = (value: string | undefined) => {
   if (value === undefined) {
     return true
   }
-  return !isNaN(Number(value)) || 'Must be a number'
+  return !isNaN(Number(value)) || "Must be a number"
 }
 
 const validTitle = (value: string) => {
-  if (value === '') {
+  if (value === "") {
     return true
   }
   if (value.length > 128) {
-    return 'Label is too long'
+    return "Label is too long"
   }
 
   return true
@@ -488,7 +488,7 @@ const validTitle = (value: string) => {
 
 const validLabel = (value: string) => {
   if (value.length > 32) {
-    return 'Label is too long'
+    return "Label is too long"
   }
   return true
 }
@@ -496,34 +496,34 @@ const validLabel = (value: string) => {
 const validPadding = (value: number): boolean | string => {
   const num = Number(value)
   if (isNaN(num)) {
-    return 'Must be a number'
+    return "Must be a number"
   }
   if (num < 0 || num > 50) {
-    return 'Padding must be between 0 and 50'
+    return "Padding must be between 0 and 50"
   }
   return true
 }
 const validLineWidth = (value: number): boolean | string => {
   const num = Number(value)
   if (isNaN(num)) {
-    return 'Must be a number'
+    return "Must be a number"
   }
   if (num < 1 || num > 10) {
-    return 'Padding must be between 0 and 50'
+    return "Padding must be between 0 and 50"
   }
   return true
 }
 
 const addExpression = () => {
   const nextColor = colorPalette[colorIndex % colorPalette.length]
-  formState.value.plots.push({ expression: '', color: nextColor, line_style: 'solid', line_width: `${lineWidth.value}pt` })
+  formState.value.plots.push({ expression: "", color: nextColor, line_style: "solid", line_width: `${lineWidth.value}pt` })
   colorIndex++
   focusExpressionField()
 }
 
 const generateExpression = () => {
   if (isFormValid.value) {
-    emit('submit', formState.value)
+    emit("submit", formState.value)
   }
 }
 
@@ -537,7 +537,7 @@ const removeExpression = (index: number) => {
 const focusExpressionField = () => {
   nextTick(() => {
     const lastIndex = formState.value.plots.length - 1
-    const lastFieldId = 'expression-' + lastIndex
+    const lastFieldId = "expression-" + lastIndex
     const lastField = document.getElementById(lastFieldId)
     if (lastField) {
       lastField.focus()
@@ -553,7 +553,7 @@ watch(lineWidth, (n, _) => {
 watch(legend, enabled => {
   if (!enabled) {
     formState.value.legend = LegendPosition.None
-    formState.value.plots.map(plot => plot.legend = '')
+    formState.value.plots.map(plot => plot.legend = "")
   } else {
     formState.value.legend = LegendPosition.NorthEast
     formState.value.plots.map((plot, index) => plot.legend = `f${index}(x)`)
