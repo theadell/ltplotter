@@ -8,24 +8,63 @@
     rounded="lg"
   >
     <v-card-item>
-      <v-text-field
-        v-model="xValueString"
+      <v-tabs
+        v-model="tab"
+        align-tabs="center"
+        bg-color="surface-variant"
+        class="rounded-lg pa-1 mb-4"
         density="compact"
-        label="x values"
-        persistent-hint
-        single-line
-        variant="outlined"
-      />
-      <v-divider class="mb-5" :thickness="3" />
-      <v-text-field
-        v-model="yValueString"
-        density="compact"
-        label="y values"
-        persistent-hint
-        single-line
-        variant="outlined"
-      />
+        grow
+        height="44px"
+      >
+        <v-tab
+          active-color="background"
+          class="rounded text-none"
+          density="compact"
+          height="34px"
+          rounded="lg"
+          selected-class="selected-tab"
+          :value="Tabs.Values"
+        >
+          Values
+        </v-tab>
+        <v-tab
+          active-color="background"
+          class="rounded text-none"
+          density="compact"
+          height="34px"
+          rounded="lg"
+          selected-class="selected-tab"
+          :value="Tabs.Config"
+        >
+          Configuration
+        </v-tab>
+      </v-tabs>
+
+      <v-tabs-window v-model="tab" class="px-0 py-2">
+        <v-tabs-window-item :value="Tabs.Values">
+          <v-text-field
+            v-model="xValueString"
+            density="compact"
+            label="x values"
+            persistent-hint
+            single-line
+            variant="outlined"
+          />
+          <v-divider class="mb-5" :thickness="3" />
+          <v-text-field
+            v-model="yValueString"
+            density="compact"
+            label="y values"
+            persistent-hint
+            single-line
+            variant="outlined"
+          />
+        </v-tabs-window-item>
+        <v-tabs-window-item :value="Tabs.Config" />
+      </v-tabs-window>
     </v-card-item>
+
   </v-card>
   <v-btn
     block
@@ -41,20 +80,22 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref } from "vue"
-import {PlotRequest} from "@/lib/models/plot";
 
-// Define props and emits can be used here if you had any, but they're not in your original script
-// const props = defineProps<{ /* your props here */ }>()
-// const emit = defineEmits<{(e: 'submit', formData: DataPlotRequest): void}>()
+import { ref } from "vue"
+import { DataPlotRequest } from "@/lib/models/plot"
 
-// Reactive references for the input strings
+const enum Tabs {
+  Values = "values",
+  Config = "config",
+}
+
+const tab = ref(Tabs.Values)
+
 const xValueString = ref<string>("")
 const yValueString = ref<string>("")
 const loading = ref<boolean>(false)
-const emit = defineEmits<{(e: "submit", formData: PlotRequest): void }>()
+const emit = defineEmits<{(e: "submit", formData: DataPlotRequest): void }>()
 
-// Convert string to array of floats
 const parseToFloatArray = (str: string): number[] => {
   return str.split(",").map(s => s.trim()).filter(s => s.length > 0).map(Number)
 }
@@ -85,7 +126,6 @@ const generatePlot = () => {
         legends: ["LPM (Laughs Per Minute)", "PPE (Puns Per Episode)"],
       },
     }
-    console.log(funnyDataPlotRequest)
     emit("submit", funnyDataPlotRequest)
   }
 
@@ -94,4 +134,9 @@ const generatePlot = () => {
 </script>
 
 <style scoped>
+.selected-tab {
+  background-color: rgba(var(--v-theme-background), 1);
+  color: var(--v-theme-background);
+  font-weight: 700;
+}
 </style>

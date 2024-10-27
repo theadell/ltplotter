@@ -8,28 +8,28 @@ export interface PlotElement {
     legend?: string
   }
 export enum AxisLines {
-  None = 'none',
-  Box = 'box',
-  Left = 'left',
-  Middle = 'middle',
-  Center = 'center',
-  Right = 'right',
-  Empty = ''
+  None = "none",
+  Box = "box",
+  Left = "left",
+  Middle = "middle",
+  Center = "center",
+  Right = "right",
+  Empty = ""
 }
 export enum Grid {
-  None = 'none',
-  MAJOR = 'major',
-  MINOR = 'minor',
-  BOTH = 'both',
+  None = "none",
+  MAJOR = "major",
+  MINOR = "minor",
+  BOTH = "both",
 }
 
 export enum LegendPosition {
-  SouthhWest= 'south west',
-  SouthEast= 'south east',
-  NorthWest = 'north west',
-  NorthEast = 'north east',
-  OuterNorthEast = 'outer north east',
-  None = '',
+  SouthhWest= "south west",
+  SouthEast= "south east",
+  NorthWest = "north west",
+  NorthEast = "north east",
+  OuterNorthEast = "outer north east",
+  None = "",
 }
 
 export interface PlotRequest {
