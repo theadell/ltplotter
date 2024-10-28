@@ -61,7 +61,40 @@
             variant="outlined"
           />
         </v-tabs-window-item>
-        <v-tabs-window-item :value="Tabs.Config" />
+        <v-tabs-window-item :value="Tabs.Config">
+          <v-text-field
+            v-model="title"
+            density="compact"
+            label="title"
+            persistent-hint
+            single-line
+            variant="outlined"
+          />
+          <v-text-field
+            v-model="xLabel"
+            density="compact"
+            label="x label"
+            persistent-hint
+            single-line
+            variant="outlined"
+          />
+          <v-text-field
+            v-model="yLabel"
+            density="compact"
+            label="y label"
+            persistent-hint
+            single-line
+            variant="outlined"
+          />
+          <v-text-field
+            v-model="legends"
+            density="compact"
+            label="legend1, legend2, ..."
+            persistent-hint
+            single-line
+            variant="outlined"
+          />
+        </v-tabs-window-item>
       </v-tabs-window>
     </v-card-item>
 
@@ -95,6 +128,10 @@ const xValueString = ref<string>("")
 const yValueString = ref<string>("")
 const loading = ref<boolean>(false)
 const emit = defineEmits<{(e: "submit", formData: DataPlotRequest): void }>()
+const title = ref<string>("title")
+const xLabel = ref<string>("x label")
+const yLabel = ref<string>("y label")
+const legends = ref<string>("legend1, legend2, ...")
 
 const parseToFloatArray = (str: string): number[] => {
   return str.split(",").map(s => s.trim()).filter(s => s.length > 0).map(Number)
@@ -118,12 +155,12 @@ const generatePlot = () => {
         { values: yValues },
       ],
       metadata: {
-        title: "The Rise and Fall of Sitcom Hilarity",
+        title: title.value,
         labels: {
-          x: "Years of Laugh Tracks",
-          y: "Giggle Quotient",
+          x: xLabel.value,
+          y: yLabel.value,
         },
-        legends: ["LPM (Laughs Per Minute)", "PPE (Puns Per Episode)"],
+        legends: legends.value.split(",").map(s => s.trim()).filter(s => s.length > 0),
       },
     }
     emit("submit", funnyDataPlotRequest)
