@@ -29,10 +29,11 @@ namespace PlotService.Protobuf {
             "dGEYAyABKAsyDi5wbG90Lk1ldGFkYXRhIhcKBVlEYXRhEg4KBnZhbHVlcxgB",
             "IAMoAiJICghNZXRhZGF0YRINCgV0aXRsZRgBIAEoCRIcCgZsYWJlbHMYAiAB",
             "KAsyDC5wbG90LkxhYmVscxIPCgdsZWdlbmRzGAMgAygJIh4KBkxhYmVscxIJ",
-            "CgF4GAEgASgJEgkKAXkYAiABKAkiGwoMUGxvdFJlc3BvbnNlEgsKA3BkZhgB",
-            "IAEoDDJECgtQbG90U2VydmljZRI1CgxHZW5lcmF0ZVBsb3QSES5wbG90LlBs",
-            "b3RSZXF1ZXN0GhIucGxvdC5QbG90UmVzcG9uc2VCJVoMbHRwbG90dGVyL3Bi",
-            "qgIUUGxvdFNlcnZpY2UuUHJvdG9idWZiBnByb3RvMw=="));
+            "CgF4GAEgASgJEgkKAXkYAiABKAkiKgoMUGxvdFJlc3BvbnNlEgsKA3BkZhgB",
+            "IAEoDBINCgVsYXRleBgCIAEoCTJECgtQbG90U2VydmljZRI1CgxHZW5lcmF0",
+            "ZVBsb3QSES5wbG90LlBsb3RSZXF1ZXN0GhIucGxvdC5QbG90UmVzcG9uc2VC",
+            "JVoMbHRwbG90dGVyL3BiqgIUUGxvdFNlcnZpY2UuUHJvdG9idWZiBnByb3Rv",
+            "Mw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -40,7 +41,7 @@ namespace PlotService.Protobuf {
             new pbr::GeneratedClrTypeInfo(typeof(global::PlotService.Protobuf.YData), global::PlotService.Protobuf.YData.Parser, new[]{ "Values" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::PlotService.Protobuf.Metadata), global::PlotService.Protobuf.Metadata.Parser, new[]{ "Title", "Labels", "Legends" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::PlotService.Protobuf.Labels), global::PlotService.Protobuf.Labels.Parser, new[]{ "X", "Y" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::PlotService.Protobuf.PlotResponse), global::PlotService.Protobuf.PlotResponse.Parser, new[]{ "Pdf" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::PlotService.Protobuf.PlotResponse), global::PlotService.Protobuf.PlotResponse.Parser, new[]{ "Pdf", "Latex" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1006,6 +1007,7 @@ namespace PlotService.Protobuf {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlotResponse(PlotResponse other) : this() {
       pdf_ = other.pdf_;
+      latex_ = other.latex_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1027,6 +1029,18 @@ namespace PlotService.Protobuf {
       }
     }
 
+    /// <summary>Field number for the "latex" field.</summary>
+    public const int LatexFieldNumber = 2;
+    private string latex_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Latex {
+      get { return latex_; }
+      set {
+        latex_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1043,6 +1057,7 @@ namespace PlotService.Protobuf {
         return true;
       }
       if (Pdf != other.Pdf) return false;
+      if (Latex != other.Latex) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1051,6 +1066,7 @@ namespace PlotService.Protobuf {
     public override int GetHashCode() {
       int hash = 1;
       if (Pdf.Length != 0) hash ^= Pdf.GetHashCode();
+      if (Latex.Length != 0) hash ^= Latex.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1073,6 +1089,10 @@ namespace PlotService.Protobuf {
         output.WriteRawTag(10);
         output.WriteBytes(Pdf);
       }
+      if (Latex.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Latex);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1087,6 +1107,10 @@ namespace PlotService.Protobuf {
         output.WriteRawTag(10);
         output.WriteBytes(Pdf);
       }
+      if (Latex.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Latex);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1099,6 +1123,9 @@ namespace PlotService.Protobuf {
       int size = 0;
       if (Pdf.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeBytesSize(Pdf);
+      }
+      if (Latex.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Latex);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1114,6 +1141,9 @@ namespace PlotService.Protobuf {
       }
       if (other.Pdf.Length != 0) {
         Pdf = other.Pdf;
+      }
+      if (other.Latex.Length != 0) {
+        Latex = other.Latex;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1134,6 +1164,10 @@ namespace PlotService.Protobuf {
             Pdf = input.ReadBytes();
             break;
           }
+          case 18: {
+            Latex = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -1151,6 +1185,10 @@ namespace PlotService.Protobuf {
             break;
           case 10: {
             Pdf = input.ReadBytes();
+            break;
+          }
+          case 18: {
+            Latex = input.ReadString();
             break;
           }
         }
