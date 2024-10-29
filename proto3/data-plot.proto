@@ -26,4 +26,7 @@ message Labels {
   string y = 2;
 }
 
-message PlotResponse { bytes pdf = 1; }
+message PlotResponse { 
+  bytes pdf = 1;
+  string latex = 2;
+}
