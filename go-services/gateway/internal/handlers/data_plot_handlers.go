@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"log"
 	"log/slog"
@@ -37,10 +38,13 @@ func CreateDataPlotHandlerRPC(clientManager *rpc.ChartServiceClientManager) http
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", "attachment; filename=chart.pdf")
+		w.Header().Set("Content-Type", "application/json")
 
-		w.Write(res.Pdf)
+		w.WriteHeader(http.StatusAccepted)
+		json.NewEncoder(w).Encode(map[string]string{
+			"latex": res.Latex,
+			"pdf":   base64.StdEncoding.EncodeToString(res.Pdf),
+		})
 	}
 }
 

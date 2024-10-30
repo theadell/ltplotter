@@ -8,6 +8,9 @@
                     "type": "string",
                     "format": "binary",
                     "binaryEncoding": "base64"
+                },
+                "latex": {
+                    "type": "string"
                 }
             },
             "additionalProperties": true,
