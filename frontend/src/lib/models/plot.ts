@@ -71,3 +71,8 @@ export interface DataPlotRequest {
 export interface PlotJobResponse {
     jobID: string;
 }
+
+export interface DataPlotResponse {
+  pdf: string;
+  latex: string;
+}

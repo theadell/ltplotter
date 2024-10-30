@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Google.Protobuf;
 using Microsoft.Extensions.Options;
 using PlotService.Extensions;
 using PlotService.Protobuf;
@@ -46,7 +47,7 @@ public class LatexService(IOptions<LatexCompilerSettings> latexCompilerSettings)
         }
     }
 
-    public  byte[] CompileLatex(string latex)
+    public (ByteString, string) CompileLatex(string latex)
     {
         try
         {
@@ -65,12 +66,12 @@ public class LatexService(IOptions<LatexCompilerSettings> latexCompilerSettings)
 
             Directory.Delete(tempDir, true);
 
-            return pdfBytes;
+            return (ByteString.CopyFrom(pdfBytes), latex);
         }
         catch (Exception ex)
         {
             Log.Error("Exception while compiling latex: {@ex}", ex);
-            return [];
+            return (ByteString.CopyFrom([]), string.Empty);
         }
     }
 }

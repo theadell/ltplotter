@@ -10,14 +10,11 @@ namespace PlotService.Protobuf
     {
         public override Task<PlotResponse> GeneratePlot(PlotRequest request, ServerCallContext context)
         {
-            var latex = string.Empty;
             return request
                 .Pipe(latexService.GenerateLatex)
                 .Pipe(Log.Information)
-                .Pipe(l =>  latex = l)
                 .Pipe(latexService.CompileLatex)
-                .Pipe(ByteString.CopyFrom)
-                .Pipe(pdf => new PlotResponse { Pdf = pdf, Latex = latex })
+                .Pipe(value => new PlotResponse { Pdf = value.Item1, Latex = value.Item2 })
                 .Pipe(Task.FromResult);
         }
     }

@@ -47,7 +47,15 @@ const onFormSubmit = async (plotRequest : DataPlotRequest) => {
   const payload = plotRequest
   resetState()
   try {
-    const pdfBlob = await api.plotExpression(payload)
+    const response = await api.plotExpression(payload)
+    latexCode.value = response.latex
+    const byteCharacters = atob(response.pdf)
+    const byteNumbers = new Array(byteCharacters.length)
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    }
+    const byteArray = new Uint8Array(byteNumbers)
+    const pdfBlob = new Blob([byteArray], { type: "application/pdf" })
     pdfURL.value = URL.createObjectURL(pdfBlob)
   } catch (error) {
     status.value.error = true

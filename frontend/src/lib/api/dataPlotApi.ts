@@ -1,16 +1,16 @@
 import { HTTPError } from "ky"
-import { DataPlotRequest } from "../models/plot"
-import apiClient from "./client"
+import { DataPlotRequest, DataPlotResponse } from "../models/plot"
 import { PlotError } from "../models/plotError"
+import apiClient from "./client"
 
 const dataPlotApi = {
   plotExpression: async (
     requestBody: DataPlotRequest,
-  ): Promise<Blob> => {
+  ): Promise<DataPlotResponse> => {
     try {
       return await apiClient
         .post("plot/data", { json: requestBody })
-        .blob()
+        .json()
     } catch (error: any) {
       if (error instanceof HTTPError) {
         if (error.response.status === 400) {
