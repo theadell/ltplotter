@@ -60,6 +60,15 @@
             single-line
             variant="outlined"
           />
+          <v-btn
+            block
+            class="mb-5 text-subtitle-2"
+            color="blue-grey-lighten-1"
+            prepend-icon="mdi-plus"
+            variant="text"
+          >
+            Add value series
+          </v-btn>
         </v-tabs-window-item>
         <v-tabs-window-item :value="Tabs.Config">
           <v-text-field
