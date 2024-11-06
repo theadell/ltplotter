@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package plot;
+
+option go_package = "ltplotter/expressionsvc/pb";
+
+import "buf/validate/validate.proto";
+
+service ExpressionPlotService {
+  rpc GeneratePlot(ExprPlotRequest) returns (ExprPlotResponse);
+}
+
+message PlotExpression {
+  // PGF/Tikz Expression
+  string expression = 1
+      [ (buf.validate.field).string = {min_len : 1, max_len : 32} ];
+  // Plot line Domain. i.e. -10:10
+  string domain = 2 [ (buf.validate.field).string = {
+    pattern : "^$|^-?\\d*\\.?\\d+:-?\\d*\\.?\\d+$"
+  } ];
+  // number of samples per line
+  int32 samples = 3 [ (buf.validate.field) = {
+    ignore : IGNORE_IF_DEFAULT_VALUE,
+    int32 : {gte : 10, lte : 100},
+  } ];
+  // line color
+  string color = 4;
+  string line_style = 5 [ (buf.validate.field).string = {
+    in : [
+      "",
+      "solid",
+      "dashed",
+      "dotted",
+      "loosely dashed",
+      "densely dotted",
+      "dashdotted",
+      "dashdotdotted",
+      "densely dashdotdotted",
+      "loosely dashdotdotted"
+    ]
+  } ];
+  // line width in points i.e. 1.5pt
+  string line_width = 6 [ (buf.validate.field) = {
+    ignore : IGNORE_IF_DEFAULT_VALUE,
+    string : {pattern : "^\\d+(\\.\\d+)?pt$"}
+  } ];
+  string legend = 7 [ (buf.validate.field).string.max_len = 20 ];
+}
+
+message ExprPlotRequest {
+  option (buf.validate.message).cel = {
+    id : "PlotExpression.x_max_greater_than_x_min",
+    message : "x_max must be greater than x_min",
+    expression : "this.x_max >= this.x_min"
+  };
+  option (buf.validate.message).cel = {
+    id : "PlotExpression.y_max_greater_than_y_min",
+    message : "y_max must be greater than y_min",
+    expression : "this.y_max >= this.y_min"
+  };
+  string x_label = 1 [ (buf.validate.field).string.max_len = 20 ];
+  string y_label = 2 [ (buf.validate.field).string.max_len = 20 ];
+  int32 x_min = 3;
+  int32 x_max = 4;
+  int32 y_min = 5;
+  int32 y_max = 6;
+  string axis_lines = 7 [
+    json_name = "axis_lines",
+    (buf.validate.field).string = {
+      in : [ "", "none", "box", "left", "middle", "center", "right" ]
+    }
+  ];
+  // figure padding
+  int32 border = 8 [ (buf.validate.field).int32 = {lt : 50, gte : 0} ];
+  string grid = 9 [ (buf.validate.field).string = {
+    in : [ "", "none", "major", "minor", "both" ]
+  } ];
+  // Title of the plot
+  string title = 10 [ (buf.validate.field).string.max_len = 20 ];
+  // Legend position
+  string legend = 11 [ (buf.validate.field) = {
+    string : {
+      in : [
+        "",
+        "south west",
+        "south east",
+        "north west",
+        "north east",
+        "outer north east"
+      ]
+    }
+  } ];
+  // Expressions to plot
+  repeated PlotExpression plots = 12
+      [ (buf.validate.field).repeated = {min_items : 1, max_items : 5} ];
+}
+
+message ExprPlotResponse {
+  string latex_src_code = 1;
+  bytes pdf_plot = 2;
+}

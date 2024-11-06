@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package plot;
+
+option go_package = "ltplotter/pb";
+option csharp_namespace = "ManimCompilerService.Protobuf";
+
+service ManimCompilerService { rpc GenerateVideo(ManimRequest) returns (ManimResponse); }
+
+message ManimRequest {
+  string pythonSource = 1;
+}
+
+message ManimResponse {
+  string manimVideoUrl = 1;
+}
