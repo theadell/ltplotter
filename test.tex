@@ -1,0 +1,12 @@
+\documentclass{standalone}
+\usepackage{pgfplots}
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[title={Sample Plot}, xlabel={Time (s)}, ylabel={Value}, legend pos=outer north east]
+\addplot coordinates {(0, 0) (1, 1) (2, 4) (3, 9) (4, 16)};
+\addlegendentry{y = x2}
+\addplot coordinates {(0, 0) (1, 2) (2, 8) (3, 18) (4, 32)};
+\addlegendentry{y = 2x}
+\end{axis}
+\end{tikzpicture}
+\end{document}
