@@ -13,6 +13,7 @@ builder.Services.Configure<CertificateSettings>(
     builder.Configuration.GetSection(nameof(CertificateSettings)));
 
 builder.Services.AddScoped<IManimService, ManimService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
