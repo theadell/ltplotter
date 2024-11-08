@@ -6,7 +6,7 @@ namespace ManimCompilerService.Services;
 
 public class ManimService : IManimService
 {
-    public bool CreateVideo(string pythonSource)
+    public string CreateVideo(string pythonSource)
     {
         try
         {
@@ -22,14 +22,13 @@ public class ManimService : IManimService
             
             // TODO: Return location of file and implement method
 
-            Directory.Delete(tempDir, true);
 
-            return true;
+            return $"{tempDir}";
         }
         catch (Exception ex)
         {
             Log.Error("Exception while compiling latex: {@ex}", ex);
-            return false;
+            return null;
         }
     }
  
