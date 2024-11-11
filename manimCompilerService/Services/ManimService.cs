@@ -16,18 +16,18 @@ public class ManimService : IManimService
             var pythonFilePath = Path.Combine(tempDir, "manimScene.py");
             File.WriteAllText(pythonFilePath, pythonSource);
 
-            var arguments = $"-ql --media_dir {Path.Combine(tempDir, "media")} {pythonFilePath}".Pipe(Log.Information);
+            var mediaDir = Path.Combine(tempDir, "media");
+            var arguments = $"-ql --media_dir {mediaDir} {pythonFilePath}".Pipe(Log.Information);
             
             ProcessUtils.RunProcess("manim", arguments);
             
-            // TODO: Return location of file and implement method
-
-
-            return $"{tempDir}";
+            var file = Directory.GetFiles(mediaDir, "*.mp4", SearchOption.AllDirectories).FirstOrDefault().Pipe(Log.Information);
+            
+            return tempDir;
         }
         catch (Exception ex)
         {
-            Log.Error("Exception while compiling latex: {@ex}", ex);
+            Log.Error("Exception while compiling manim: {@ex}", ex);
             return null;
         }
     }

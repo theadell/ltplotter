@@ -8,7 +8,7 @@ namespace ManimCompilerService.Services;
 
 public class UploadService : IUploadService
 {
-    public async Task<string> UploadBlobAsync(string localFilePath)
+    public async Task<Uri> UploadBlobAsync(string localFilePath)
     {
         const string storageAccountName = "ltplotter";
         const string containerName = "ltplotter";
@@ -18,27 +18,53 @@ public class UploadService : IUploadService
             new DefaultAzureCredential());
 
         var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-        await containerClient.CreateIfNotExistsAsync(PublicAccessType.None);
-
+        await containerClient.CreateIfNotExistsAsync();
         var blobName = Path.GetFileName(localFilePath);
-
         var blobClient = containerClient.GetBlobClient(blobName);
 
+
         await blobClient.UploadAsync(localFilePath, true);
-         
-        var sasBuilder = new BlobSasBuilder
+        var userDelegationKey = await RequestUserDelegationKeyAsync(blobServiceClient);
+        var uri = CreateUserDelegationSasUri(blobClient, userDelegationKey);
+
+        return uri;
+    }
+
+    private async Task<UserDelegationKey> RequestUserDelegationKeyAsync(
+        BlobServiceClient blobServiceClient)
+    {
+        UserDelegationKey userDelegationKey =
+            await blobServiceClient.GetUserDelegationKeyAsync(
+                DateTimeOffset.UtcNow,
+                DateTimeOffset.UtcNow.AddDays(1));
+
+        return userDelegationKey;
+    }
+
+    private Uri CreateUserDelegationSasUri(
+        BlobBaseClient blobClient,
+        UserDelegationKey userDelegationKey)
+    {
+        var sasBuilder = new BlobSasBuilder()
         {
-            BlobContainerName = containerName,
-            BlobName = blobName,
-            Resource = "ltplotterrg",
+            BlobContainerName = blobClient.BlobContainerName,
+            BlobName = blobClient.Name,
+            Resource = "b",
             StartsOn = DateTimeOffset.UtcNow,
-            ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
+            ExpiresOn = DateTimeOffset.UtcNow.AddDays(1)
         };
+
         sasBuilder.SetPermissions(BlobSasPermissions.Read);
 
-        var sasUri = blobClient.GenerateSasUri(sasBuilder);
+        var uriBuilder = new BlobUriBuilder(blobClient.Uri)
+        {
+            Sas = sasBuilder.ToSasQueryParameters(
+                userDelegationKey,
+                blobClient
+                    .GetParentBlobContainerClient()
+                    .GetParentBlobServiceClient().AccountName)
+        };
 
-        return sasUri.AbsoluteUri;
+        return uriBuilder.ToUri();
     }
 }
