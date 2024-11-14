@@ -5,25 +5,30 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
-
+    
     <ItemGroup>
         <PackageReference Include="Azure.Identity" Version="1.13.1" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
         <PackageReference Include="Google.Protobuf" Version="3.27.2" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
         <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.65.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
         <PackageReference Include="Grpc.Tools" Version="2.65.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-
+    
     <ItemGroup>
-        <Protobuf Include=".\proto3\manim-video.proto" GrpcServices="Server" OutputDir="Generated" />
+        <Compile Include="Generated\*.cs" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+      <None Remove="Generated\proto3\**" />
     </ItemGroup>
+
+    <Target Name="GenerateProtobufClasses">
+        <Exec Command="buf generate https://github.com/theadell/ltplotter.git\#branch\=main,subdir\=proto3 --path manim -o Generate" />
+    </Target>
 
 </Project>
