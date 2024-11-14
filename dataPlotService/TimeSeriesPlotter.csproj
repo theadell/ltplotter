@@ -17,9 +17,9 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Protobuf Include=".\proto3\data-plot.proto" GrpcServices="Server" OutputDir="Generated" />
-  </ItemGroup>
+  <Target Name="GenerateProtobufClasses">
+    <Exec Command="buf generate https://github.com/theadell/ltplotter.git\#branch\=main,subdir\=proto3 --path data -o Generate" />
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
