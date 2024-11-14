@@ -4,6 +4,7 @@ COPY . .
 
 RUN rm -rf ./Generated
 
+RUN dotnet build -t:GenerateProtobufClasses
 RUN dotnet restore "./TimeSeriesPlotter.csproj" --disable-parallel
 RUN dotnet publish "./TimeSeriesPlotter.csproj" -c release -o /app --no-restore
 
