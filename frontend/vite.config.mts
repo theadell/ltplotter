@@ -6,10 +6,22 @@ import Layouts from "vite-plugin-vue-layouts"
 import Vue from "@vitejs/plugin-vue"
 import VueRouter from "unplugin-vue-router/vite"
 import Vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
+import monacoEditorPluginModule from "vite-plugin-monaco-editor"
 
 // Utilities
 import { defineConfig } from "vite"
 import { fileURLToPath, URL } from "node:url"
+
+const isObjectWithDefaultFunction = (module: unknown): module is { default: typeof monacoEditorPluginModule } => (
+  module != null &&
+  typeof module === "object" &&
+  "default" in module &&
+  typeof module.default === "function"
+)
+
+const monacoEditorPlugin = isObjectWithDefaultFunction(monacoEditorPluginModule)
+  ? monacoEditorPluginModule.default
+  : monacoEditorPluginModule
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -37,6 +49,7 @@ export default defineConfig({
     Vue({
       template: { transformAssetUrls },
     }),
+    monacoEditorPlugin({}),
     // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
     Vuetify({
       autoImport: true,

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import { PlotRequest } from '../models/plot'
-import lescape from 'escape-latex'
+import { PlotRequest } from "../models/plot"
+import lescape from "escape-latex"
 
 export function setPlotRequestDomainFromXBounds (plotRequest: PlotRequest): PlotRequest {
   const { x_min, x_max, plots } = plotRequest

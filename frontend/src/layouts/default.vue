@@ -24,8 +24,8 @@
         <v-btn class="text-none" to="/data">
           Numerical
         </v-btn>
-        <v-btn class="text-none" to="/ltspice">
-          LTSpice
+        <v-btn class="text-none" to="/manim">
+          Manim
         </v-btn>
       </div>
 
@@ -77,12 +77,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useDark, useToggle } from '@vueuse/core'
+import { useDark, useToggle } from "@vueuse/core"
 
 const drawer = ref(false)
 
 const isDark = useDark()
-const themeIcon = computed(() => isDark.value ? 'mdi-weather-night' : 'mdi-weather-sunny')
+const themeIcon = computed(() => isDark.value ? "mdi-weather-night" : "mdi-weather-sunny")
 const toggleDark = useToggle(isDark)
 const toggleTheme = () => toggleDark()
 

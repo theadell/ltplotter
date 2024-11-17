@@ -1,9 +1,9 @@
-import ky from 'ky'
+import ky from "ky"
 
 const apiClient = ky.create({
-  prefixUrl: '/api/v2',
+  prefixUrl: "/api/v2",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 })
 

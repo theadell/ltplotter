@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { highlightLaTeX } from '@/lib/utils/shiki'
+import { highlightLaTeX } from "@/lib/utils/shiki"
 
 interface Props {
   pdfUrl: string | null
@@ -96,7 +96,7 @@ interface Props {
   error: boolean
   errorMessage: string | null
 }
-const highlightedCode = ref('')
+const highlightedCode = ref("")
 const copied = ref(false)
 const downloaded = ref(false)
 const tooltipOpen = ref(false)
@@ -116,16 +116,16 @@ const copyToClipboard = () => {
         }, 1000)
       })
       .catch(err => {
-        console.error('Failed to copy text: ', err)
+        console.error("Failed to copy text: ", err)
       })
   }
 }
 const downloadCodeSnippet = () => {
-  const fileContent = props.latexCode || ''
+  const fileContent = props.latexCode || ""
   const ts = Date.now()
   const fileName = `plot-snippet-${ts}.tex`
-  const blob = new Blob([fileContent], { type: 'text/x-latex' })
-  const a = document.createElement('a')
+  const blob = new Blob([fileContent], { type: "text/x-latex" })
+  const a = document.createElement("a")
   a.href = URL.createObjectURL(blob)
   a.download = fileName
   downloaded.value = true

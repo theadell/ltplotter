@@ -1,18 +1,18 @@
-import { all, create, MathNode } from 'mathjs'
-import { Err, Ok, Result } from '../models/result'
+import { all, create, MathNode } from "mathjs"
+import { Err, Ok, Result } from "../models/result"
 
 const requiringArguments = [
-  'abs', 'acos', 'add', 'and', 'array', 'asin', 'atan', 'atan2', 'bin', 'ceil', 'cos', 'cosec',
-  'cosh', 'cot', 'deg', 'dim', 'div', 'divide', 'equal', 'floor', 'frac', 'gcd', 'greater',
-  'hex', 'Hex', 'int', 'ifthenelse', 'iseven', 'isodd', 'isprime', 'less', 'ln', 'log10',
-  'log2', 'max', 'min', 'mod', 'Mod', 'multiply', 'neg', 'notequal', 'notgreater', 'notless',
-  'oct', 'or', 'pow', 'rad', 'real', 'round', 'scalar', 'sec', 'sign', 'sin', 'sinh', 'sqrt',
-  'subtract', 'tan', 'tanh', 'veclen',
+  "abs", "acos", "add", "and", "array", "asin", "atan", "atan2", "bin", "ceil", "cos", "cosec",
+  "cosh", "cot", "deg", "dim", "div", "divide", "equal", "floor", "frac", "gcd", "greater",
+  "hex", "Hex", "int", "ifthenelse", "iseven", "isodd", "isprime", "less", "ln", "log10",
+  "log2", "max", "min", "mod", "Mod", "multiply", "neg", "notequal", "notgreater", "notless",
+  "oct", "or", "pow", "rad", "real", "round", "scalar", "sec", "sign", "sin", "sinh", "sqrt",
+  "subtract", "tan", "tanh", "veclen",
 ]
 
 const functionNameMappings: Record<string, string> = {
-  log: 'log10 or log2',
-  exp: 'e^x',
+  log: "log10 or log2",
+  exp: "e^x",
 }
 
 const config = {}
@@ -52,7 +52,7 @@ math.import(additionalFunctions)
 
 math.import({
   e: Math.E,
-  '!': math.factorial,
+  "!": math.factorial,
 }, { override: true })
 
 export function validateExpression (expression: string): Result<true, string> {
@@ -60,7 +60,7 @@ export function validateExpression (expression: string): Result<true, string> {
     const node: MathNode = math.parse(expression)
 
     node.traverse((node: MathNode, path: string, parent: MathNode) => {
-      if (node.type === 'FunctionNode') {
+      if (node.type === "FunctionNode") {
         const functionNode = node as any
         const functionName = functionNode.fn.name as keyof typeof math | keyof typeof additionalFunctions
 
@@ -79,12 +79,12 @@ export function validateExpression (expression: string): Result<true, string> {
         }
       }
 
-      if (node.type === 'SymbolNode') {
+      if (node.type === "SymbolNode") {
         const symbolNode = node as any
         const name = symbolNode.name as keyof typeof math | keyof typeof additionalFunctions
 
         if (requiringArguments.includes(name)) {
-          if (!(parent && parent.type === 'FunctionNode' && (parent as any).fn.name === name)) {
+          if (!(parent && parent.type === "FunctionNode" && (parent as any).fn.name === name)) {
             throw new Error(`Function '${name}' requires an argument. Did you mean '${name}(x)'?`)
           }
         }
@@ -92,7 +92,7 @@ export function validateExpression (expression: string): Result<true, string> {
         if (functionNameMappings[symbolNode.name]) {
           throw new Error(`Function '${symbolNode.name}' is not valid. Did you mean ${functionNameMappings[symbolNode.name]}?`)
         }
-        if (!(name in math) && !(name in additionalFunctions) && symbolNode.name !== 'x') {
+        if (!(name in math) && !(name in additionalFunctions) && symbolNode.name !== "x") {
           throw new Error(`Unknown variable or function: ${symbolNode.name}`)
         }
       }
@@ -101,14 +101,14 @@ export function validateExpression (expression: string): Result<true, string> {
     // If no errors occur, return Ok
     return Ok(true)
   } catch (error) {
-    if (error instanceof Error && error.message.startsWith('Function')) {
+    if (error instanceof Error && error.message.startsWith("Function")) {
       return Err(error.message) // Return specific error message with suggestions
-    } else if (error instanceof Error && error.message.startsWith('Unknown variable or function')) {
+    } else if (error instanceof Error && error.message.startsWith("Unknown variable or function")) {
       return Err(error.message) // Return specific error message
     } else if (error instanceof SyntaxError) {
-      return Err('Syntax error in expression.')
+      return Err("Syntax error in expression.")
     } else {
-      return Err('Invalid mathematical expression.')
+      return Err("Invalid mathematical expression.")
     }
   }
 }

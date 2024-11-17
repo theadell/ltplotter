@@ -7,39 +7,39 @@
 </template>
 
 <script lang="ts" setup>
-import { useDark } from '@vueuse/core'
-import { useTheme } from 'vuetify'
+import { useDark } from "@vueuse/core"
+import { useTheme } from "vuetify"
 
 const theme = useTheme()
 
 const isDark = useDark({
-  selector: 'html',
-  attribute: 'class',
-  valueDark: 'dark',
-  valueLight: 'light',
+  selector: "html",
+  attribute: "class",
+  valueDark: "dark",
+  valueLight: "light",
   onChanged: isDark => {
-    theme.global.name.value = isDark ? 'dark' : 'light'
+    theme.global.name.value = isDark ? "dark" : "light"
   },
 })
 
 onBeforeMount(() => {
-  const savedTheme = localStorage.getItem('vueuse-color-scheme')
+  const savedTheme = localStorage.getItem("vueuse-color-scheme")
   if (savedTheme) {
-    if (savedTheme === 'dark') {
+    if (savedTheme === "dark") {
       isDark.value = true
-      theme.global.name.value = 'dark'
-    } else if (savedTheme === 'light') {
+      theme.global.name.value = "dark"
+    } else if (savedTheme === "light") {
       isDark.value = false
-      theme.global.name.value = 'light'
-    } else if (savedTheme === 'auto') {
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      theme.global.name.value = "light"
+    } else if (savedTheme === "auto") {
+      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
       isDark.value = systemPrefersDark
-      theme.global.name.value = systemPrefersDark ? 'dark' : 'light'
+      theme.global.name.value = systemPrefersDark ? "dark" : "light"
     }
   } else {
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
     isDark.value = systemPrefersDark
-    theme.global.name.value = systemPrefersDark ? 'dark' : 'light'
+    theme.global.name.value = systemPrefersDark ? "dark" : "light"
   }
 })
 

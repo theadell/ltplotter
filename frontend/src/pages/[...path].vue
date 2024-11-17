@@ -25,6 +25,6 @@
 </route>
 
 <script setup lang="ts">
-import notFoundImgSrc from '@/assets/undraw_page_not_found.svg'
+import notFoundImgSrc from "@/assets/undraw_page_not_found.svg"
 
 </script>

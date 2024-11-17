@@ -23,10 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import { PlotRequest } from '@/lib/models/plot'
-import api from '@/lib/api/plotApi'
-import { setPlotRequestDomainFromXBounds } from '@/lib/utils/plotExpressionHelpers'
-import { PlotError } from '@/lib/models/plotError'
+import { PlotRequest } from "@/lib/models/plot"
+import api from "@/lib/api/plotApi"
+import { setPlotRequestDomainFromXBounds } from "@/lib/utils/plotExpressionHelpers"
+import { PlotError } from "@/lib/models/plotError"
 
 interface Status {
   loading: boolean
@@ -59,8 +59,8 @@ const onFormSubmit = async (plotRequest : PlotRequest) => {
     if (error instanceof PlotError) {
       status.value.errorMessage = error.message
     } else {
-      console.error('An unexpected error occurred:', error)
-      status.value.errorMessage = 'An unexpected error occurred'
+      console.error("An unexpected error occurred:", error)
+      status.value.errorMessage = "An unexpected error occurred"
     }
   } finally {
     status.value.loading = false
