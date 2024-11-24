@@ -24,7 +24,7 @@ builder.WebHost.ConfigureKestrel(options =>
         File.ReadAllText(certificateSettings.ServerCertificatePath),
         File.ReadAllText(certificateSettings.ServerKeyPath)); 
     
-    options.ListenAnyIP(5001, listenOptions =>
+    options.ListenAnyIP(5002, listenOptions =>
     {
         listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
         listenOptions.UseHttps(certificate);
