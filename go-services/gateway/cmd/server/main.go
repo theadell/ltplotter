@@ -21,8 +21,9 @@ func main() {
 
 	dataPlotRPCManager := rpc.NewChartServiceClientManager(config.PGFPlotServiceURLRPC, config.CertsPath)
 	exprPlotRPCManager := rpc.NewExpressionPlotServiceClientManager(config.ExprPlotServiceUrl, config.CertsPath)
+	manimRPCManager := rpc.NewManimServiceClientManager(config.ManimServiceUrl, config.CertsPath)
 
-	handler := routes.SetupRoutes(*config, jm, dataPlotRPCManager, exprPlotRPCManager)
+	handler := routes.SetupRoutes(jm, dataPlotRPCManager, exprPlotRPCManager, manimRPCManager)
 
 	server := http.Server{
 		Addr:              fmt.Sprintf("%s:%d", config.Host, config.Port),

@@ -2,14 +2,12 @@ package middleware
 
 import (
 	"context"
-	"log/slog"
-
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log/slog"
 )
 
 type slogGrpcLogger struct {
@@ -38,6 +36,7 @@ func (l *slogGrpcLogger) Log(ctx context.Context, level logging.Level, msg strin
 func NewSlogGrpcLogger(logger *slog.Logger) *slogGrpcLogger {
 	return &slogGrpcLogger{logger: logger}
 }
+
 func UnaryServerLogger(logger *slog.Logger) grpc.UnaryServerInterceptor {
 	return logging.UnaryServerInterceptor(NewSlogGrpcLogger(logger))
 }

@@ -12,6 +12,7 @@ type Config struct {
 	PGFPlotsServiceURL   string
 	PGFPlotServiceURLRPC string
 	ExprPlotServiceUrl   string
+	ManimServiceUrl      string
 	CertsPath            string
 }
 
@@ -37,6 +38,11 @@ func LoadConfig() *Config {
 	config.PGFPlotServiceURLRPC = os.Getenv("PGFPLOT_SVC_URL_RPC")
 	if config.PGFPlotServiceURLRPC == "" {
 		config.PGFPlotServiceURLRPC = "data-plot-service:5001"
+	}
+
+	config.ManimServiceUrl = os.Getenv("MANIM_SVC_URL")
+	if config.ManimServiceUrl == "" {
+		config.ManimServiceUrl = "data-plot-service:5002"
 	}
 
 	config.ExprPlotServiceUrl = os.Getenv("EXPR_PLOT_SVC_URL")

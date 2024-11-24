@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"log"
 	"log/slog"
@@ -12,7 +11,7 @@ import (
 	"time"
 )
 
-func CreateDataPlotHandlerRPC(clientManager *rpc.ChartServiceClientManager) http.HandlerFunc {
+func CreateManimHandler(clientManager *rpc.ManimServiceClientManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		client, err := clientManager.GetClient()
 		if err != nil {
@@ -20,29 +19,32 @@ func CreateDataPlotHandlerRPC(clientManager *rpc.ChartServiceClientManager) http
 			return
 		}
 
-		var req pb.PlotRequest
+		var req pb.ManimRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			slog.Error("failed to decode request body", "error", err.Error())
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 		defer cancel()
 
-		res, err := client.GeneratePlot(ctx, &req)
+		res, err := client.GenerateVideo(ctx, &req)
 		if err != nil {
-			log.Printf("Error generating chart: %v", err)
+			log.Printf("Error generating video: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 
+		log.Printf(res.ManimVideoUrl)
 		w.WriteHeader(http.StatusAccepted)
-		json.NewEncoder(w).Encode(map[string]string{
-			"latex": res.Latex,
-			"pdf":   base64.StdEncoding.EncodeToString(res.Pdf),
+		err = json.NewEncoder(w).Encode(map[string]string{
+			"manimVideoUrl": res.ManimVideoUrl,
 		})
+		if err != nil {
+			log.Printf("Error encoding response: %v", err)
+		}
 	}
 }
