@@ -60,7 +60,7 @@
           <v-card-text class="flex-grow-1 d-flex align-center justify-center">
             <div v-if="result?.success" class="video-container">
               <video autoplay controls style="width: 100%; height: auto;">
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                <source :src="manimVideoUrl" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -80,11 +80,13 @@
 </template>
 
 <script setup>
+import Manim from "@/pages/manim.vue"
 import { onMounted, ref } from "vue"
 import * as monaco from "monaco-editor"
 import { createMonacoHlighter, MONACO_DEFAULT_THEME, setmonacoTheme } from "@/lib/utils/shiki"
 import { useTheme } from "vuetify"
 import { shikiToMonaco } from "@shikijs/monaco"
+import manimApi from "@/lib/api/manimApi"
 
 const theme = useTheme()
 const tabs = [
@@ -97,6 +99,7 @@ const tabs = [
 
 const activeTabName = ref("main.py")
 const result = ref(null)
+const manimVideoUrl = ref("")
 
 let editor = null
 
@@ -172,17 +175,26 @@ const switchTab = tabName => {
   if (newTab.viewState) {
     editor.restoreViewState(newTab.viewState)
   } else {
-    editor.setPosition({ lineNumber: 1, column: 1 })
+    editor.setPosition({
+      lineNumber: 1,
+      column: 1,
+    })
   }
 
   editor.focus()
 }
 
-const runCode = () => {
+const runCode = async () => {
   if (!editor) return
   console.log("Run code triggered")
   console.log("Code content:", editor.getValue())
-  result.value = { success: true }
+  try {
+    const manimVideoResponse = await manimApi.createVideo({ pythonSource: editor.getValue() })
+    manimVideoUrl.value = manimVideoResponse.manimVideoUrl
+    result.value = { success: true }
+  } catch (e) {
+    console.log("Error while getting manim video response", e)
+  }
 }
 
 watch(() => theme.current.value, v => {
@@ -194,12 +206,15 @@ watch(() => theme.current.value, v => {
 .editor {
   height: 100%;
 }
+
 .video-container {
   width: 100%;
 }
+
 .v-card-title {
   font-weight: bold;
 }
+
 .active-file-tab {
   background-color: rgba(0, 0, 0, 0.08);
   border-radius: 3px;

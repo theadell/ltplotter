@@ -76,3 +76,11 @@ export interface DataPlotResponse {
   pdf: string;
   latex: string;
 }
+
+export interface ManimRequest {
+  pythonSource: string;
+}
+
+export interface ManimResponse {
+  manimVideoUrl: string;
+}
